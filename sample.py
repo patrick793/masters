@@ -37,8 +37,8 @@ class SimpleSwitch13(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(SimpleSwitch13, self).__init__(*args, **kwargs)
 
-        self.client_cnt = 1
-        self.server_cnt = 4
+        self.client_cnt = 2
+        self.server_cnt = 2
 
         self.mac_to_port = {}
         self.port_to_mac = {}
@@ -85,9 +85,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.cur_server_leaf_index = 0
 
     def init_delay(self):
-        hub.sleep(2)
+        hub.sleep(1)
         # time.sleep(5)
-
 
         self.is_init = False
 
@@ -97,7 +96,18 @@ class SimpleSwitch13(app_manager.RyuApp):
                 self.spine_dpids.append(x)
 
         self.server_leaf_dpids.sort()
-        self.client_leaf_dpids.sort()        
+        self.client_leaf_dpids.sort()
+
+        # Set meters for spine switches
+
+        # for dpid in self.spine_dpids:
+        #     datapath = self.datapaths[dpid]
+        #     ofproto = datapath.ofproto
+        #     parser = datapath.ofproto_parser
+
+        #     bands = [parser.OFPMeterBandDrop(type_=ofproto.OFPMBT_DROP, len_=0, rate=1000, burst_size=10)]
+        #     req=parser.OFPMeterMod(datapath=datapath, command=ofproto.OFPMC_ADD, flags=ofproto.OFPMF_KBPS, meter_id=99, bands=bands)
+        #     datapath.send_msg(req)
 
         self.logger.info("Initialization complete!")
         self.logger.info(self.mac_to_port)
@@ -110,6 +120,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         datapath = ev.msg.datapath
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
+
+        dpid = datapath.id
 
         # install table-miss flow entry
         #
@@ -124,6 +136,17 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.add_flow(datapath, match, actions, 0)
 
         self.datapaths[datapath.id] = datapath
+
+        links_list = get_link(self, None)
+        # links=[(link.src.dpid,link.dst.dpid,{'port':link.src.port_no}) for link in links_list]
+        
+        for link in links_list:
+            self.mac_to_port.setdefault(link.src.dpid, {})
+            self.port_to_mac.setdefault(link.src.dpid, {})
+            self.mac_to_port[link.src.dpid][link.dst.dpid] = link.src.port_no
+            self.port_to_mac[link.src.dpid][link.src.port_no] = link.dst.dpid
+
+        self.logger.info("Successful getting topology data!")
 
         for x in self.server_ips:
             self.send_arp(datapath, x)
@@ -168,8 +191,11 @@ class SimpleSwitch13(app_manager.RyuApp):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
 
-        inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,
-                                             actions)]
+        inst = []
+        inst.append(parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS, actions))
+        if meter_id != 0:
+            inst.append(parser.OFPInstructionMeter(meter_id,ofproto.OFPIT_METER))
+
         if buffer_id:
             mod = parser.OFPFlowMod(datapath=datapath, buffer_id=buffer_id,
                                     priority=priority, match=match,
@@ -289,7 +315,7 @@ class SimpleSwitch13(app_manager.RyuApp):
 
                 cookie = random.randint(0, 0xffffffffffffffff)
 
-                self.add_flow(spine_datapath, match_send, actions, idle_timeout=5, cookie=cookie)
+                self.add_flow(spine_datapath, match_send, actions, idle_timeout=5, cookie=cookie, meter_id=99)
 
                 # Server Switch -> Server Host
 
@@ -476,20 +502,10 @@ class SimpleSwitch13(app_manager.RyuApp):
         #                           in_port=in_port, actions=actions, data=data)
         # datapath.send_msg(out)
 
-    @set_ev_cls(event.EventSwitchEnter)
-    def get_topology_data(self, ev):
+    # @set_ev_cls(event.EventSwitchEnter)
+    # def get_topology_data(self, ev):
 
         # hosts_list = get_host(self,None)
         # switch_list = get_switch(self, None)
         # switches=[switch.dp.id for switch in switch_list]
-        links_list = get_link(self, None)
-        # links=[(link.src.dpid,link.dst.dpid,{'port':link.src.port_no}) for link in links_list]
         
-        for link in links_list:
-            self.mac_to_port.setdefault(link.src.dpid, {})
-            self.port_to_mac.setdefault(link.src.dpid, {})
-            self.mac_to_port[link.src.dpid][link.dst.dpid] = link.src.port_no
-            self.port_to_mac[link.src.dpid][link.src.port_no] = link.dst.dpid
-
-        self.get_topology_data_success = True
-        self.logger.info("Successful getting topology data!")
