@@ -85,7 +85,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.cur_server_leaf_index = 0
 
     def init_delay(self):
-        hub.sleep(1)
+        hub.sleep(2)
         # time.sleep(5)
 
         self.is_init = False
@@ -99,7 +99,6 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.client_leaf_dpids.sort()
 
         # Set meters for spine switches
-
         # for dpid in self.spine_dpids:
         #     datapath = self.datapaths[dpid]
         #     ofproto = datapath.ofproto
@@ -187,7 +186,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         datapath.send_msg(out)
 
 
-    def add_flow(self, datapath, match, actions, priority=ofproto_v1_3.OFP_DEFAULT_PRIORITY, idle_timeout=0, buffer_id=None, cookie=0):
+    def add_flow(self, datapath, match, actions, priority=ofproto_v1_3.OFP_DEFAULT_PRIORITY, idle_timeout=0, buffer_id=None, cookie=0, meter_id=0):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
 
@@ -272,24 +271,29 @@ class SimpleSwitch13(app_manager.RyuApp):
             if ip_header.dst == self.controller_ip and ip_header.proto == in_proto.IPPROTO_TCP:
                 tcp_header = pkt.get_protocols(tcp.tcp)[0]
                 
-                cur_spine_dpid = self.spine_dpids[self.cur_spine_index]
+                cur_spine_dpid_upper = self.spine_dpids[self.cur_spine_index + len(self.spine_dpids) / 2]
+                cur_spine_dpid_lower = self.spine_dpids[self.cur_spine_index]
                 cur_server_leaf_dpid = self.server_leaf_dpids[self.cur_server_leaf_index]
                 cur_target_server_mac =  self.dpid_to_mac[cur_server_leaf_dpid]
 
-                spine_datapath = self.datapaths[cur_spine_dpid]
+                spine_datapath_upper = self.datapaths[cur_spine_dpid_upper]
+                spine_datapath_lower = self.datapaths[cur_spine_dpid_lower]
                 server_leaf_datapath = self.datapaths[cur_server_leaf_dpid]
 
-                out_port_client_leaf_to_spine = self.mac_to_port[dpid][cur_spine_dpid]
-                out_port_spine_to_server_leaf = self.mac_to_port[cur_spine_dpid][cur_server_leaf_dpid]
+                out_port_client_leaf_to_spine_upper = self.mac_to_port[dpid][cur_spine_dpid_upper]
+                out_port_spine_lower_to_server_leaf = self.mac_to_port[cur_spine_dpid_lower][cur_server_leaf_dpid]
                 out_port_server_leaf_to_server = self.mac_to_port[cur_server_leaf_dpid][cur_target_server_mac]
 
-                out_port_spine_to_client_leaf = self.mac_to_port[cur_spine_dpid][dpid]
-                out_port_server_leaf_to_spine = self.mac_to_port[cur_server_leaf_dpid][cur_spine_dpid]
+                out_port_spine_upper_to_client_leaf = self.mac_to_port[cur_spine_dpid_upper][dpid]
+                out_port_server_leaf_to_spine_lower = self.mac_to_port[cur_server_leaf_dpid][cur_spine_dpid_lower]
 
-                self.logger.info("Current Path: " + src + " -> " + str(dpid) + " -> " + str(cur_spine_dpid) +
-                    " -> " + str(cur_server_leaf_dpid) + " -> " + self.dpid_to_mac[cur_server_leaf_dpid])            
+                out_port_spine_lower_to_spine_upper = self.mac_to_port[cur_spine_dpid_lower][cur_spine_dpid_upper]
+                out_port_spine_upper_to_spine_lower = self.mac_to_port[cur_spine_dpid_upper][cur_spine_dpid_lower]
 
-                # Client Switch -> Spine Switch
+                self.logger.info("Current Path: " + src + " -> " + str(dpid) + " -> " + str(cur_spine_dpid_upper) +
+                    " -> " + str(cur_spine_dpid_lower) + " -> " + str(cur_server_leaf_dpid) + " -> " + self.dpid_to_mac[cur_server_leaf_dpid])            
+
+                # Client Switch -> Spine Switch Upper
 
                 match_send = parser.OFPMatch(
                     # in_port=in_port,
@@ -303,19 +307,27 @@ class SimpleSwitch13(app_manager.RyuApp):
                     tcp_dst=tcp_header.dst_port
                 )
 
-                actions = [parser.OFPActionOutput(out_port_client_leaf_to_spine)]
+                actions = [parser.OFPActionOutput(out_port_client_leaf_to_spine_upper)]
 
                 cookie = random.randint(0, 0xffffffffffffffff)
 
                 self.add_flow(datapath, match_send, actions, idle_timeout=5, cookie=cookie)
 
-                # Spine Switch -> Server Switch
+                # Spine Switch Upper -> Spine Switch Lower
 
-                actions = [parser.OFPActionOutput(out_port_spine_to_server_leaf)]
+                actions = [parser.OFPActionOutput(out_port_spine_upper_to_spine_lower)]
 
                 cookie = random.randint(0, 0xffffffffffffffff)
 
-                self.add_flow(spine_datapath, match_send, actions, idle_timeout=5, cookie=cookie, meter_id=99)
+                self.add_flow(spine_datapath_upper, match_send, actions, idle_timeout=5, cookie=cookie)
+
+                # Spine Switch Lower -> Server Switch
+
+                actions = [parser.OFPActionOutput(out_port_spine_lower_to_server_leaf)]
+
+                cookie = random.randint(0, 0xffffffffffffffff)
+
+                self.add_flow(spine_datapath_lower, match_send, actions, idle_timeout=5, cookie=cookie)
 
                 # Server Switch -> Server Host
 
@@ -355,22 +367,31 @@ class SimpleSwitch13(app_manager.RyuApp):
 
                 self.add_flow(datapath, match_receive, actions, idle_timeout=5, cookie=cookie)
                                 
-                # Spine Switch -> Client Switch (Reverse)
+                # Spine Switch Upper -> Client Switch (Reverse)
 
-                actions = [parser.OFPActionOutput(out_port_spine_to_client_leaf)]
+                actions = [parser.OFPActionOutput(out_port_spine_upper_to_client_leaf)]
 
                 cookie = random.randint(0, 0xffffffffffffffff)
 
-                self.add_flow(spine_datapath, match_receive, actions, idle_timeout=5, cookie=cookie)
-                
+                self.add_flow(spine_datapath_upper, match_receive, actions, idle_timeout=5, cookie=cookie)
 
-                # Server Switch -> Spine Switch (Reverse)
+                # Spine Switch Lower -> Spine Switch Upper (Reverse)
 
-                actions = [parser.OFPActionOutput(out_port_server_leaf_to_spine)]
+                actions = [parser.OFPActionOutput(out_port_spine_lower_to_spine_upper)]
+
+                cookie = random.randint(0, 0xffffffffffffffff)
+
+                self.add_flow(spine_datapath_lower, match_receive, actions, idle_timeout=5, cookie=cookie)                
+
+                # Server Switch -> Spine Switch Lower (Reverse)
+
+                actions = [parser.OFPActionOutput(out_port_server_leaf_to_spine_lower)]
 
                 cookie = random.randint(0, 0xffffffffffffffff)
 
                 self.add_flow(server_leaf_datapath, match_receive, actions, idle_timeout=5, cookie=cookie)
+
+
 
             if ip_header.dst == self.controller_ip and ip_header.proto == in_proto.IPPROTO_UDP:
                 udp_header = pkt.get_protocols(udp.udp)[0]
@@ -469,7 +490,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.cur_server_leaf_index = 0
 
                 self.cur_spine_index += 1
-                if self.cur_spine_index == len(self.spine_dpids):
+                if self.cur_spine_index == len(self.spine_dpids) / 2:
                     self.cur_spine_index = 0
 
             return
