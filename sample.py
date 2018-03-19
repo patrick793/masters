@@ -208,7 +208,7 @@ class SimpleSwitch13(app_manager.RyuApp):
 
     def monitor(self):
         while True:
-            os.system('clear')
+            # os.system('clear')
             for x in range(len(self.spine_dpids) / 2):
                 self.request_stats(self.datapaths[self.spine_dpids[x]])
             for dpid in self.server_leaf_dpids:
@@ -222,15 +222,33 @@ class SimpleSwitch13(app_manager.RyuApp):
         req = parser.OFPPortStatsRequest(datapath)
         datapath.send_msg(req)
 
-    def calculate_speed(dpid_type, dpid):
-        if dpid_type == DT_SPINE:
+    def calculate_speed(self, dpid):
+        if self.dpid_type[dpid] == DT_SPINE:
             if self.is_lb:
                 transmit_diff = self.spine_cur_total_transmitted_bytes[dpid] - self.spine_prev_total_transmitted_bytes[dpid]
             elif self.is_lp:
                 transmit_diff = self.spine_cur_total_transmitted_packets[dpid] - self.spine_prev_total_transmitted_packets[dpid]
-            cur_sec = self.spine_cur_time_sec - self.spine_prev_time_sec
-            if self.spine_cur_time_nsec - self.spine_prev_time_nsec < 0:
-                pass
+            cur_sec = self.spine_cur_time_sec[dpid] - self.spine_prev_time_sec[dpid]
+            cur_nsec = self.spine_cur_time_nsec[dpid] - self.spine_prev_time_nsec[dpid]
+
+            if cur_sec < 0 or (cur_sec == 0 and cur_nsec < 0):
+                self.logger.info("ERROR: prev_time larger than cur_time")
+                return
+
+            if cur_nsec < 0:
+                cur_sec -= 1
+                cur_nsec = (self.spine_cur_time_nsec[dpid] + 1000000000) - self.spine_prev_time_nsec[dpid]
+                
+
+            time_diff = cur_sec + cur_nsec / 1000000000.0
+            print(self.spine_cur_total_transmitted_bytes[dpid])
+            print(self.spine_prev_total_transmitted_bytes[dpid])
+            print("time_diff  " + str(time_diff))
+            print("transmit_diff: " + str(transmit_diff))
+            return 0
+
+                
+
                 # Continue  
 
         # if()
@@ -283,7 +301,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 for i in range(len(self.ports_to_check_per_dpid[dpid])):
                     x = body[self.ports_to_check_per_dpid[dpid][i]]
                     if x.port_no != self.ports_to_check_per_dpid[dpid][i]:
-                        print("ERROR: Index and port mismatch! " + str(self.ports_to_check_per_dpid[dpid][i]) + ":" + str(x.port_no))
+                        self.logger.info("ERROR: Index and port mismatch! " + str(self.ports_to_check_per_dpid[dpid][i]) + ":" + str(x.port_no))
                         return
                     if self.is_lb:
                         total_transmitted_bytes += x.tx_bytes
@@ -338,7 +356,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 for i in range(len(self.ports_to_check_per_dpid[dpid])):
                     x = body[self.ports_to_check_per_dpid[dpid][i]]
                     if x.port_no != self.ports_to_check_per_dpid[dpid][i]:
-                        print("ERROR: Index and port mismatch! " + str(self.ports_to_check_per_dpid[dpid][i]) + ":" + str(x.port_no))
+                        self.logger.info("ERROR: Index and port mismatch! " + str(self.ports_to_check_per_dpid[dpid][i]) + ":" + str(x.port_no))
                         return
                     if self.is_lb:
                         total_transmitted_bytes += x.tx_bytes
@@ -351,10 +369,10 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.server_leaf_cur_total_transmitted_bytes[dpid] = total_transmitted_bytes
                 elif self.is_lp:
                     self.server_leaf_cur_total_transmitted_packets[dpid] = total_transmitted_packets 
-            self.logger.info(str(self.server_leaf_prev_total_transmitted_bytes[dpid]) + " " + str(self.server_leaf_cur_total_transmitted_bytes[dpid]))
-            self.logger.info(str(self.server_leaf_prev_time_sec[dpid]) + " " + str(self.server_leaf_cur_time_sec[dpid]))
-            self.logger.info(str(self.server_leaf_prev_time_nsec[dpid]) + " " + str(self.server_leaf_cur_time_nsec[dpid]))
-            print(body)
+            # self.logger.info(str(self.server_leaf_prev_total_transmitted_bytes[dpid]) + " " + str(self.server_leaf_cur_total_transmitted_bytes[dpid]))
+            # self.logger.info(str(self.server_leaf_prev_time_sec[dpid]) + " " + str(self.server_leaf_cur_time_sec[dpid]))
+            # self.logger.info(str(self.server_leaf_prev_time_nsec[dpid]) + " " + str(self.server_leaf_cur_time_nsec[dpid]))
+            # print(body)
 
 
                 # for x in ports_to_check_per_dpid[dpid]:
@@ -518,7 +536,8 @@ class SimpleSwitch13(app_manager.RyuApp):
             return cur_spine_dpid_upper, cur_spine_dpid_lower, cur_server_leaf_dpid
         elif self.is_lb:
             for x in range(len(self.spine_dpids) / 2 ):
-                pass
+                print(self.calculate_speed(self.spine_dpids[x]))
+            raise AssertionError
         elif self.is_lp:
             pass
 
