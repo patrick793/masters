@@ -13,8 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from operator import attrgetter
+# from operator import attrgetter
 import os
+import ctypes
 
 import random
 from ryu.base import app_manager
@@ -32,6 +33,8 @@ from ryu.topology.api import get_switch, get_link, get_host, get_all_host
 
 from ryu.lib import hub
 
+from random import randint
+
 # import time
 
 # Datapath Types
@@ -48,17 +51,24 @@ class SimpleSwitch13(app_manager.RyuApp):
         # os.system('clear')
 
         self.client_cnt = 1
-        self.server_cnt = 4
+        self.server_cnt = 1
 
 
         self.is_rr = False  # Round-robin
+        self.is_rb = False # Random
+        self.is_ih = False # IP Hashing
         self.is_lc = False  # Least connections
-        self.is_lb = False   # Least bandwidth
-        self.is_lp = True   # Least packets
+        self.is_lb = True   # Least bandwidth
+        self.is_lp = False   # Least packets
+
+        self.is_tcp = True
+        self.is_udp = False
 
         self.mac_to_port = {}
         self.port_to_mac = {}
         self.mac_to_ip = {}
+
+        self.l4_port_to_ip = {}
 
         self.get_topology_data_success = False
 
@@ -95,7 +105,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.target_mac = "00:00:00:00:00:01"
         self.target_ip = "10.0.0.1"
 
-        if self.is_rr:
+        if self.is_rr or self.is_ih:
             self.cur_spine_index = 0
             self.cur_server_leaf_index = 0
 
@@ -108,11 +118,11 @@ class SimpleSwitch13(app_manager.RyuApp):
                 self.spine_prev_total_transmitted_bytes = {}
                 self.spine_cur_total_transmitted_bytes = {}
                 self.server_leaf_prev_total_transmitted_bytes = {}
-                self.server_leaf_cur_total_transmitted_bytes = {}                
+                self.server_leaf_cur_total_transmitted_bytes = {}
             if self.is_lp:
                 self.spine_prev_total_transmitted_packets = {}
                 self.spine_cur_total_transmitted_packets = {}
-                self.server_leaf_prev_total_transmitted_packets = {}                
+                self.server_leaf_prev_total_transmitted_packets = {}
                 self.server_leaf_cur_total_transmitted_packets = {}
             
             self.spine_prev_time_sec = {}
@@ -125,6 +135,9 @@ class SimpleSwitch13(app_manager.RyuApp):
             self.server_leaf_cur_time_nsec = {}
 
             self.ports_to_check_per_dpid = {}
+        if self.is_ih == True:
+            self.ip_hash_to_spine_dpid = {}
+            self.ip_hash_to_server_leaf_dpid = {}
 
     def init_delay(self):
         hub.sleep(2)
@@ -189,14 +202,15 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.ports_to_check_per_dpid[dpid] = []
                 self.monitor_thread = hub.spawn(self.monitor)
 
-        self.logger.info("Initialization complete!")
-        self.logger.info(self.dpid_type)
-        self.logger.info(self.mac_to_port)
-        self.logger.info(self.port_to_mac)
+        
+        self.logger.info("dpid_types" + str(self.dpid_type))
+        self.logger.info("mac_to_port" + str(self.mac_to_port))
+        self.logger.info("port_to_mac" + str(self.port_to_mac))
         self.logger.info("spine_dpids: " + str(self.spine_dpids))
         self.logger.info("server_leaf_dpids: " + str(self.server_leaf_dpids))
         self.logger.info("client_leaf_dpids: " + str(self.client_leaf_dpids))
 
+        self.logger.info("Initialization complete!")
         if self.is_rr:
             self.logger.info("Round-robin Load Balancing is activated!")
         elif self.is_lc:
@@ -204,7 +218,16 @@ class SimpleSwitch13(app_manager.RyuApp):
         elif self.is_lb:
             self.logger.info("Least Bandwidth Load Balancing is activated!")
         elif self.is_lp:
-            self.logger.info("Least Packets Load Balancing is activated")
+            self.logger.info("Least Packets Load Balancing is activated!")
+        elif self.is_rb:
+            self.logger.info("Random Load Balancing is activated!")
+        elif self.is_ih:
+            self.logger.info("IP Hashing Load Balancing is activated!")
+
+        if self.is_tcp:
+            self.logger.info("TCP-only mode! (Note: Establishing UDP connections may cause inconsistencies)")
+        if self.is_udp:
+            self.logger.info("UDP-only mode! (Note: Establishing TCP connections may cause inconsistencies)")
 
     def monitor(self):
         while True:
@@ -330,7 +353,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 for i in range(len(body)):
                     x = body[i]
                     try:
-                        if self.mac_to_ip[self.port_to_mac[dpid][x.port_no]] in self.server_ips:                            
+                        if self.mac_to_ip[self.port_to_mac[dpid][x.port_no]] in self.server_ips:
                             self.ports_to_check_per_dpid[dpid].append([i, x.port_no])
                             if self.is_lb:
                                 total_transmitted_bytes += x.tx_bytes
@@ -502,7 +525,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 self.dpid_to_mac[dpid] = arp_header.src_mac
                 self.mac_to_ip[arp_header.src_mac] = arp_header.src_ip
 
-    def select_next_dpids(self):
+    def select_next_dpids(self, src_ip = None):
         
         if self.is_rr:
             cur_spine_dpid_upper = self.spine_dpids[self.cur_spine_index + len(self.spine_dpids) / 2]
@@ -597,9 +620,44 @@ class SimpleSwitch13(app_manager.RyuApp):
                         cur_server_leaf_dpid = self.server_leaf_dpids[x]
                 
             return cur_spine_dpid_upper, cur_spine_dpid_lower, cur_server_leaf_dpid
+        elif self.is_rb:
+            x = randint(0, len(self.spine_dpids) / 2 - 1)
+            cur_spine_dpid_upper = self.spine_dpids[x + len(self.spine_dpids) / 2]
+            cur_spine_dpid_lower = self.spine_dpids[x]
+            cur_server_leaf_dpid = self.server_leaf_dpids[randint(0, len(self.server_leaf_dpids) - 1)]
+            return cur_spine_dpid_upper, cur_spine_dpid_lower, cur_server_leaf_dpid
+        elif self.is_ih:
+            if src_ip == None:
+                self.logger.info("ERROR: Source IP not available!")
+            # Java's hashCode() method implementation
+            hash_code = 0
+            for x in src_ip:
+                char_code = ord(x)
+                hash_code = ((hash_code << 5) - hash_code) + char_code
+                # hash_code = hash_code & 0xFFFFFFFF # Converting to 32-bit unsigned integer
+                hash_code = ctypes.c_int32(hash_code).value
+
+            if self.ip_hash_to_spine_dpid.get(hash_code, None) == None:
+                # Round-robin
+                self.ip_hash_to_spine_dpid[hash_code] = self.spine_dpids[self.cur_spine_index]
+                self.ip_hash_to_server_leaf_dpid[hash_code] = self.server_leaf_dpids[self.cur_server_leaf_index]
+
+                self.cur_server_leaf_index += 1
+                if self.cur_server_leaf_index == len(self.server_leaf_dpids):
+                    self.cur_server_leaf_index = 0
+
+                self.cur_spine_index += 1
+                if self.cur_spine_index == len(self.spine_dpids) / 2:
+                    self.cur_spine_index = 0
+                self.logger.info("IP hash added!")
+
+            cur_spine_dpid_upper = self.ip_hash_to_spine_dpid[hash_code] + len(self.spine_dpids) / 2
+            cur_spine_dpid_lower = self.ip_hash_to_spine_dpid[hash_code]
+            cur_server_leaf_dpid = self.ip_hash_to_server_leaf_dpid[hash_code]
+
+            return cur_spine_dpid_upper, cur_spine_dpid_lower, cur_server_leaf_dpid
 
         return None, None, None
-
 
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def packet_in_handler(self, ev):
@@ -649,146 +707,289 @@ class SimpleSwitch13(app_manager.RyuApp):
 
             # print(str(dpid) + " " + str(ip_header.proto))
 
+            cookie = random.randint(0, 0xffffffffffffffff)
+
             if ip_header.dst == self.controller_ip and ip_header.proto == in_proto.IPPROTO_TCP:
                 tcp_header = pkt.get_protocols(tcp.tcp)[0]
 
-                cur_spine_dpid_upper, cur_spine_dpid_lower, cur_server_leaf_dpid = self.select_next_dpids()
+                if ip_header.src in self.client_ips:
                 
-                if cur_spine_dpid_upper == None or cur_spine_dpid_lower == None or cur_server_leaf_dpid == None:
-                    self.logger.info("ERROR: dpids not collected while installing flow")
-                    return
+                    if self.is_ih:
+                        cur_spine_dpid_upper, cur_spine_dpid_lower, cur_server_leaf_dpid = self.select_next_dpids(ip_header.src)
+                    else:
+                        cur_spine_dpid_upper, cur_spine_dpid_lower, cur_server_leaf_dpid = self.select_next_dpids()
+                    
+                    if cur_spine_dpid_upper == None or cur_spine_dpid_lower == None or cur_server_leaf_dpid == None:
+                        self.logger.info("ERROR: dpids not collected while installing flow")
+                        return
 
-                if self.is_lc or self.is_lb or self.is_lp:
-                    self.spine_active_ports[cur_spine_dpid_lower].append(tcp_header.src_port)
-                    self.server_leaf_active_ports[cur_server_leaf_dpid].append(tcp_header.src_port)
-                    # print(self.spine_active_ports)
+                    if self.is_lc or self.is_lb or self.is_lp:
+                        self.spine_active_ports[cur_spine_dpid_lower].append(tcp_header.src_port)
+                        self.server_leaf_active_ports[cur_server_leaf_dpid].append(tcp_header.src_port)
+                        # print(self.spine_active_ports)
 
+                    self.l4_port_to_ip[tcp_header.src_port] = []
+                    self.l4_port_to_ip[tcp_header.src_port].append(cur_spine_dpid_upper)
+                    self.l4_port_to_ip[tcp_header.src_port].append(cur_spine_dpid_lower)
+                    self.l4_port_to_ip[tcp_header.src_port].append(dpid)
 
-                cur_target_server_mac =  self.dpid_to_mac[cur_server_leaf_dpid]
+                    print(self.l4_port_to_ip)
 
-                spine_datapath_upper = self.datapaths[cur_spine_dpid_upper]
-                spine_datapath_lower = self.datapaths[cur_spine_dpid_lower]
-                server_leaf_datapath = self.datapaths[cur_server_leaf_dpid]
+                    cur_target_server_mac =  self.dpid_to_mac[cur_server_leaf_dpid]
 
-                out_port_client_leaf_to_spine_upper = self.mac_to_port[dpid][cur_spine_dpid_upper]
-                out_port_spine_lower_to_server_leaf = self.mac_to_port[cur_spine_dpid_lower][cur_server_leaf_dpid]
-                out_port_server_leaf_to_server = self.mac_to_port[cur_server_leaf_dpid][cur_target_server_mac]
+                    # Datapaths to use
+                    spine_datapath_upper = self.datapaths[cur_spine_dpid_upper]
+                    spine_datapath_lower = self.datapaths[cur_spine_dpid_lower]
+                    server_leaf_datapath = self.datapaths[cur_server_leaf_dpid]
 
-                out_port_spine_upper_to_client_leaf = self.mac_to_port[cur_spine_dpid_upper][dpid]
-                out_port_server_leaf_to_spine_lower = self.mac_to_port[cur_server_leaf_dpid][cur_spine_dpid_lower]
+                    # Ports from datapaths to use
+                    out_port_client_leaf_to_spine_upper = self.mac_to_port[dpid][cur_spine_dpid_upper]
+                    out_port_spine_lower_to_server_leaf = self.mac_to_port[cur_spine_dpid_lower][cur_server_leaf_dpid]
+                    out_port_server_leaf_to_server = self.mac_to_port[cur_server_leaf_dpid][cur_target_server_mac]
+                    out_port_spine_upper_to_spine_lower = self.mac_to_port[cur_spine_dpid_upper][cur_spine_dpid_lower]
 
-                out_port_spine_lower_to_spine_upper = self.mac_to_port[cur_spine_dpid_lower][cur_spine_dpid_upper]
-                out_port_spine_upper_to_spine_lower = self.mac_to_port[cur_spine_dpid_upper][cur_spine_dpid_lower]
+                    self.logger.info("Current Path: " + src + " -> " + str(dpid) + " -> " + str(cur_spine_dpid_upper) +
+                        " -> " + str(cur_spine_dpid_lower) + " -> " + str(cur_server_leaf_dpid) + " -> " + self.dpid_to_mac[cur_server_leaf_dpid])
 
-                self.logger.info("Current Path: " + src + " -> " + str(dpid) + " -> " + str(cur_spine_dpid_upper) +
-                    " -> " + str(cur_spine_dpid_lower) + " -> " + str(cur_server_leaf_dpid) + " -> " + self.dpid_to_mac[cur_server_leaf_dpid])            
+                    # Client Switch -> Spine Switch Upper
 
-                # Client Switch -> Spine Switch Upper
+                    match_send = parser.OFPMatch(
+                        # in_port=in_port,
+                        eth_type=eth.ethertype,
+                        eth_src=src,
+                        eth_dst=dst,
+                        ip_proto=ip_header.proto,
+                        ipv4_src=ip_header.src,
+                        ipv4_dst=ip_header.dst,
+                        tcp_src=tcp_header.src_port,
+                        tcp_dst=tcp_header.dst_port
+                    )
 
-                match_send = parser.OFPMatch(
-                    # in_port=in_port,
-                    eth_type=eth.ethertype,
-                    eth_src=src,
-                    eth_dst=dst,
-                    ip_proto=ip_header.proto,
-                    ipv4_src=ip_header.src,
-                    ipv4_dst=ip_header.dst,
-                    tcp_src=tcp_header.src_port,
-                    tcp_dst=tcp_header.dst_port
-                )
+                    actions = [parser.OFPActionOutput(out_port_client_leaf_to_spine_upper)]
+                    self.add_flow(datapath, match_send, actions, idle_timeout=5, cookie=cookie)
 
-                actions = [parser.OFPActionOutput(out_port_client_leaf_to_spine_upper)]
+                    # Spine Switch Upper -> Spine Switch Lower
 
-                cookie = random.randint(0, 0xffffffffffffffff)
+                    actions = [parser.OFPActionOutput(out_port_spine_upper_to_spine_lower)]
+                    self.add_flow(spine_datapath_upper, match_send, actions, idle_timeout=5, cookie=cookie)
 
-                self.add_flow(datapath, match_send, actions, idle_timeout=5, cookie=cookie)
+                    # Spine Switch Lower -> Server Switch
 
-                # Spine Switch Upper -> Spine Switch Lower
+                    actions = [parser.OFPActionOutput(out_port_spine_lower_to_server_leaf)]
+                    self.add_flow(spine_datapath_lower, match_send, actions, idle_timeout=5, cookie=cookie)
 
-                actions = [parser.OFPActionOutput(out_port_spine_upper_to_spine_lower)]
+                    # Server Switch -> Server Host
 
-                cookie = random.randint(0, 0xffffffffffffffff)
+                    actions = [
+                        parser.OFPActionSetField(ipv4_src=self.controller_ip),
+                        parser.OFPActionSetField(eth_dst=cur_target_server_mac),
+                        parser.OFPActionSetField(ipv4_dst=self.mac_to_ip[cur_target_server_mac]),
+                        parser.OFPActionOutput(out_port_server_leaf_to_server)
+                    ]
+                    self.add_flow(server_leaf_datapath, match_send, actions, idle_timeout=5, cookie=cookie)
 
-                self.add_flow(spine_datapath_upper, match_send, actions, idle_timeout=5, cookie=cookie)
+                elif ip_header.src in self.server_ips:
 
-                # Spine Switch Lower -> Server Switch
+                    cur_spine_dpid_upper = self.l4_port_to_ip[tcp_header.dst_port][0]
+                    cur_spine_dpid_lower = self.l4_port_to_ip[tcp_header.dst_port][1]
+                    cur_client_leaf_dpid = self.l4_port_to_ip[tcp_header.dst_port][2]
 
-                actions = [parser.OFPActionOutput(out_port_spine_lower_to_server_leaf)]
+                    del self.l4_port_to_ip[tcp_header.dst_port]
 
-                cookie = random.randint(0, 0xffffffffffffffff)
+                    cur_target_client_mac =  self.dpid_to_mac[cur_client_leaf_dpid]
 
-                self.add_flow(spine_datapath_lower, match_send, actions, idle_timeout=5, cookie=cookie)
+                    # Datapaths to use
+                    spine_datapath_upper = self.datapaths[cur_spine_dpid_upper]
+                    spine_datapath_lower = self.datapaths[cur_spine_dpid_lower]
+                    client_leaf_datapath = self.datapaths[cur_client_leaf_dpid]
 
-                # Server Switch -> Server Host
+                    # Ports from datapaths to use
+                    out_port_server_leaf_to_spine_lower = self.mac_to_port[dpid][cur_spine_dpid_lower]
+                    out_port_spine_lower_to_spine_upper = self.mac_to_port[cur_spine_dpid_lower][cur_spine_dpid_upper]
+                    out_port_spine_upper_to_client_leaf = self.mac_to_port[cur_spine_dpid_upper][cur_client_leaf_dpid]
+                    out_port_client_leaf_to_client = self.mac_to_port[cur_client_leaf_dpid][cur_target_client_mac]
 
-                actions = [
-                    parser.OFPActionSetField(ipv4_src=self.controller_ip),
-                    parser.OFPActionSetField(eth_dst=cur_target_server_mac),
-                    parser.OFPActionSetField(ipv4_dst=self.mac_to_ip[cur_target_server_mac]),
-                    parser.OFPActionOutput(out_port_server_leaf_to_server)
-                ]
+                    match_receive = parser.OFPMatch(
+                        eth_type=eth.ethertype,
+                        eth_src=src,
+                        eth_dst=dst,
+                        ip_proto=ip_header.proto,
+                        ipv4_src=ip_header.src,
+                        ipv4_dst=ip_header.dst,
+                        tcp_src=tcp_header.src_port,
+                        tcp_dst=tcp_header.dst_port
+                    )
 
-                cookie = random.randint(0, 0xffffffffffffffff)
+                    # Server Switch -> Spine Switch Lower (Reverse)
 
-                self.add_flow(server_leaf_datapath, match_send, actions, idle_timeout=5, cookie=cookie)
+                    actions = [parser.OFPActionOutput(out_port_server_leaf_to_spine_lower)]
+                    self.add_flow(datapath, match_receive, actions, idle_timeout=0.5, cookie=cookie)
 
-                # Client Switch -> Client Host (Reverse)
+                    # Spine Switch Lower -> Spine Switch Upper (Reverse)
 
-                match_receive = parser.OFPMatch(
-                    eth_type=eth.ethertype,
-                    eth_src=cur_target_server_mac,
-                    eth_dst=self.controller_mac,
-                    ip_proto=ip_header.proto,
-                    ipv4_src=self.mac_to_ip[cur_target_server_mac],
-                    ipv4_dst=self.controller_ip,
-                    tcp_src=tcp_header.dst_port,
-                    tcp_dst=tcp_header.src_port
-                )
+                    actions = [parser.OFPActionOutput(out_port_spine_lower_to_spine_upper)]
+                    self.add_flow(spine_datapath_lower, match_receive, actions, idle_timeout=0.5, cookie=cookie)
 
-                actions = [
-                    parser.OFPActionSetField(eth_src=self.controller_mac),
-                    parser.OFPActionSetField(ipv4_src=self.controller_ip),
-                    parser.OFPActionSetField(eth_dst=eth.src),
-                    parser.OFPActionSetField(ipv4_dst=ip_header.src),
-                    parser.OFPActionOutput(in_port)
-                ]
+                    # Spine Switch Upper -> Client Switch (Reverse)
 
-                cookie = random.randint(0, 0xffffffffffffffff)
+                    actions = [parser.OFPActionOutput(out_port_spine_upper_to_client_leaf)]
+                    self.add_flow(spine_datapath_upper, match_receive, actions, idle_timeout=0.5, cookie=cookie)
 
-                self.add_flow(datapath, match_receive, actions, idle_timeout=5, cookie=cookie)
-                                
-                # Spine Switch Upper -> Client Switch (Reverse)
+                    # Client Switch -> Client Host (Reverse)
 
-                actions = [parser.OFPActionOutput(out_port_spine_upper_to_client_leaf)]
+                    actions = [                        
+                        parser.OFPActionSetField(ipv4_src=self.controller_ip),
+                        parser.OFPActionSetField(eth_dst=cur_target_client_mac),
+                        parser.OFPActionSetField(ipv4_dst=self.mac_to_ip[cur_target_client_mac]),
+                        # parser.OFPActionSetField(eth_src=self.controller_mac),
+                        parser.OFPActionOutput(out_port_client_leaf_to_client)
+                    ]
 
-                cookie = random.randint(0, 0xffffffffffffffff)
-
-                self.add_flow(spine_datapath_upper, match_receive, actions, idle_timeout=5, cookie=cookie)
-
-                # Spine Switch Lower -> Spine Switch Upper (Reverse)
-
-                actions = [parser.OFPActionOutput(out_port_spine_lower_to_spine_upper)]
-
-                cookie = random.randint(0, 0xffffffffffffffff)
-
-                self.add_flow(spine_datapath_lower, match_receive, actions, idle_timeout=5, cookie=cookie)                
-
-                # Server Switch -> Spine Switch Lower (Reverse)
-
-                actions = [parser.OFPActionOutput(out_port_server_leaf_to_spine_lower)]
-
-                cookie = random.randint(0, 0xffffffffffffffff)
-
-                self.add_flow(server_leaf_datapath, match_receive, actions, idle_timeout=5, cookie=cookie)
+                    self.add_flow(client_leaf_datapath, match_receive, actions, idle_timeout=0.5, cookie=cookie)
 
 
 
             if ip_header.dst == self.controller_ip and ip_header.proto == in_proto.IPPROTO_UDP:
-                udp_header = pkt.get_protocols(udp.udp)[0]
-                self.logger.info("It's UDP")
-                return      
 
-            
+                udp_header = pkt.get_protocols(udp.udp)[0]
+
+                if ip_header.src in self.client_ips:
+                
+                    if self.is_ih:
+                        cur_spine_dpid_upper, cur_spine_dpid_lower, cur_server_leaf_dpid = self.select_next_dpids(ip_header.src)
+                    else:
+                        cur_spine_dpid_upper, cur_spine_dpid_lower, cur_server_leaf_dpid = self.select_next_dpids()
+                    
+                    if cur_spine_dpid_upper == None or cur_spine_dpid_lower == None or cur_server_leaf_dpid == None:
+                        self.logger.info("ERROR: dpids not collected while installing flow")
+                        return
+
+                    if self.is_lc or self.is_lb or self.is_lp:
+                        self.spine_active_ports[cur_spine_dpid_lower].append(udp_header.src_port)
+                        print("cur_server_leaf_dpid: " + str(cur_server_leaf_dpid))
+                        self.server_leaf_active_ports[cur_server_leaf_dpid].append(udp_header.src_port)
+                        # print(self.spine_active_ports)
+
+                    self.l4_port_to_ip[udp_header.src_port] = []
+                    self.l4_port_to_ip[udp_header.src_port].append(cur_spine_dpid_upper)
+                    self.l4_port_to_ip[udp_header.src_port].append(cur_spine_dpid_lower)
+                    self.l4_port_to_ip[udp_header.src_port].append(dpid)
+
+                    cur_target_server_mac =  self.dpid_to_mac[cur_server_leaf_dpid]
+
+                    # Datapaths to use
+                    spine_datapath_upper = self.datapaths[cur_spine_dpid_upper]
+                    spine_datapath_lower = self.datapaths[cur_spine_dpid_lower]
+                    server_leaf_datapath = self.datapaths[cur_server_leaf_dpid]
+
+                    # Ports from datapaths to use
+                    out_port_client_leaf_to_spine_upper = self.mac_to_port[dpid][cur_spine_dpid_upper]
+                    out_port_spine_lower_to_server_leaf = self.mac_to_port[cur_spine_dpid_lower][cur_server_leaf_dpid]
+                    out_port_server_leaf_to_server = self.mac_to_port[cur_server_leaf_dpid][cur_target_server_mac]
+                    out_port_spine_upper_to_spine_lower = self.mac_to_port[cur_spine_dpid_upper][cur_spine_dpid_lower]
+
+                    # self.logger.info(str(dpid) + " udp_port: " + str(udp_header.src_port))
+                    self.logger.info(str(dpid) + " : " + str(eth.ethertype) + ", " + str(src) + ", " + str(dst) + ", " + str(ip_header.proto) +
+                        ", " + str(ip_header.src) + ", " + str(ip_header.dst) + ", " + str(udp_header.src_port) + ", " + str(udp_header.dst_port))
+                    
+                    # self.logger.info("Current Path: " + src + " -> " + str(dpid) + " -> " + str(cur_spine_dpid_upper) +
+                    #     " -> " + str(cur_spine_dpid_lower) + " -> " + str(cur_server_leaf_dpid) + " -> " + self.dpid_to_mac[cur_server_leaf_dpid])
+
+                    # Client Switch -> Spine Switch Upper
+
+                    match_send = parser.OFPMatch(
+                        # in_port=in_port,
+                        eth_type=eth.ethertype,
+                        eth_src=src,
+                        eth_dst=dst,
+                        ip_proto=ip_header.proto,
+                        ipv4_src=ip_header.src,
+                        ipv4_dst=ip_header.dst,
+                        udp_src=udp_header.src_port,
+                        udp_dst=udp_header.dst_port
+                    )
+
+                    actions = [parser.OFPActionOutput(out_port_client_leaf_to_spine_upper)]
+                    self.add_flow(datapath, match_send, actions, idle_timeout=5, cookie=cookie)
+
+                    # Spine Switch Upper -> Spine Switch Lower
+
+                    actions = [parser.OFPActionOutput(out_port_spine_upper_to_spine_lower)]
+                    self.add_flow(spine_datapath_upper, match_send, actions, idle_timeout=5, cookie=cookie)
+
+                    # Spine Switch Lower -> Server Switch
+
+                    actions = [parser.OFPActionOutput(out_port_spine_lower_to_server_leaf)]
+                    self.add_flow(spine_datapath_lower, match_send, actions, idle_timeout=5, cookie=cookie)
+
+                    # Server Switch -> Server Host
+
+                    actions = [
+                        parser.OFPActionSetField(ipv4_src=self.controller_ip),
+                        parser.OFPActionSetField(eth_dst=cur_target_server_mac),
+                        parser.OFPActionSetField(ipv4_dst=self.mac_to_ip[cur_target_server_mac]),
+                        parser.OFPActionOutput(out_port_server_leaf_to_server)
+                    ]
+                    self.add_flow(server_leaf_datapath, match_send, actions, idle_timeout=5, cookie=cookie)
+
+                elif ip_header.src in self.server_ips:
+
+                    cur_spine_dpid_upper = self.l4_port_to_ip[udp_header.dst_port][0]
+                    cur_spine_dpid_lower = self.l4_port_to_ip[udp_header.dst_port][1]
+                    cur_client_leaf_dpid = self.l4_port_to_ip[udp_header.dst_port][2]
+
+                    del self.l4_port_to_ip[udp_header.dst_port]
+
+                    cur_target_client_mac =  self.dpid_to_mac[cur_client_leaf_dpid]
+
+                    # Datapaths to use
+                    spine_datapath_upper = self.datapaths[cur_spine_dpid_upper]
+                    spine_datapath_lower = self.datapaths[cur_spine_dpid_lower]
+                    client_leaf_datapath = self.datapaths[cur_client_leaf_dpid]
+
+                    # Ports from datapaths to use
+                    out_port_server_leaf_to_spine_lower = self.mac_to_port[dpid][cur_spine_dpid_lower]
+                    out_port_spine_lower_to_spine_upper = self.mac_to_port[cur_spine_dpid_lower][cur_spine_dpid_upper]
+                    out_port_spine_upper_to_client_leaf = self.mac_to_port[cur_spine_dpid_upper][cur_client_leaf_dpid]
+                    out_port_client_leaf_to_client = self.mac_to_port[cur_client_leaf_dpid][cur_target_client_mac]
+
+                    match_receive = parser.OFPMatch(
+                        eth_type=eth.ethertype,
+                        eth_src=src,
+                        eth_dst=dst,
+                        ip_proto=ip_header.proto,
+                        ipv4_src=ip_header.src,
+                        ipv4_dst=ip_header.dst,
+                        udp_src=udp_header.src_port,
+                        udp_dst=udp_header.dst_port
+                    )
+
+                    # Server Switch -> Spine Switch Lower (Reverse)
+
+                    actions = [parser.OFPActionOutput(out_port_server_leaf_to_spine_lower)]
+                    self.add_flow(datapath, match_receive, actions, idle_timeout=0.5, cookie=cookie)
+
+                    # Spine Switch Lower -> Spine Switch Upper (Reverse)
+
+                    actions = [parser.OFPActionOutput(out_port_spine_lower_to_spine_upper)]
+                    self.add_flow(spine_datapath_lower, match_receive, actions, idle_timeout=0.5, cookie=cookie)
+
+                    # Spine Switch Upper -> Client Switch (Reverse)
+
+                    actions = [parser.OFPActionOutput(out_port_spine_upper_to_client_leaf)]
+                    self.add_flow(spine_datapath_upper, match_receive, actions, idle_timeout=0.5, cookie=cookie)
+
+                    # Client Switch -> Client Host (Reverse)
+
+                    actions = [
+                        parser.OFPActionSetField(ipv4_src=self.controller_ip),
+                        parser.OFPActionSetField(eth_dst=cur_target_client_mac),  
+                        parser.OFPActionSetField(ipv4_dst=self.mac_to_ip[cur_target_client_mac]),
+                        # parser.OFPActionSetField(eth_src=self.controller_mac),
+                        parser.OFPActionOutput(out_port_client_leaf_to_client)
+                    ]
+
+                    self.add_flow(client_leaf_datapath, match_receive, actions, idle_timeout=0.5, cookie=cookie)
             return
            
 
@@ -835,11 +1036,19 @@ class SimpleSwitch13(app_manager.RyuApp):
         dpid = datapath.id
 
         if self.is_lc or self.is_lb or self.is_lp:
-            tcp_src = msg.match.get('tcp_src')
+
+            if self.is_tcp:
+                tcp_src = msg.match.get('tcp_src')
+            elif self.is_udp:
+                udp_src = msg.match.get('udp_src')
+
             if dpid in self.spine_dpids:
                 if self.spine_active_ports.get(dpid, None) != None:
                     try:
-                        self.spine_active_ports[dpid].remove(tcp_src)
+                        if self.is_tcp:
+                            self.spine_active_ports[dpid].remove(tcp_src)
+                        elif self.is_udp:
+                            self.spine_active_ports[dpid].remove(udp_src)
                     except ValueError:
                         return
                 else:
@@ -847,7 +1056,10 @@ class SimpleSwitch13(app_manager.RyuApp):
             elif dpid in self.server_leaf_dpids:
                 if self.server_leaf_active_ports.get(dpid, None) != None:
                     try:
-                        self.server_leaf_active_ports[dpid].remove(tcp_src)
+                        if self.is_tcp:
+                            self.server_leaf_active_ports[dpid].remove(tcp_src)
+                        elif self.is_udp:
+                            self.server_leaf_active_ports[dpid].remove(udp_src)
                     except ValueError:
                         return
                 else:
