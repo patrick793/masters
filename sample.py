@@ -51,18 +51,18 @@ class SimpleSwitch13(app_manager.RyuApp):
         # os.system('clear')
 
         self.client_cnt = 1
-        self.server_cnt = 1
+        self.server_cnt = 2
 
 
-        self.is_rr = False  # Round-robin
+        self.is_rr = True  # Round-robin
         self.is_rb = False # Random
         self.is_ih = False # IP Hashing
         self.is_lc = False  # Least connections
-        self.is_lb = True   # Least bandwidth
+        self.is_lb = False   # Least bandwidth
         self.is_lp = False   # Least packets
 
-        self.is_tcp = True
-        self.is_udp = False
+        self.is_tcp = False
+        self.is_udp = True
 
         self.mac_to_port = {}
         self.port_to_mac = {}
@@ -713,6 +713,9 @@ class SimpleSwitch13(app_manager.RyuApp):
                 tcp_header = pkt.get_protocols(tcp.tcp)[0]
 
                 if ip_header.src in self.client_ips:
+
+                    if self.l4_port_to_ip.get(tcp_header.src_port, None) != None:
+                        return
                 
                     if self.is_ih:
                         cur_spine_dpid_upper, cur_spine_dpid_lower, cur_server_leaf_dpid = self.select_next_dpids(ip_header.src)
@@ -733,7 +736,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.l4_port_to_ip[tcp_header.src_port].append(cur_spine_dpid_lower)
                     self.l4_port_to_ip[tcp_header.src_port].append(dpid)
 
-                    print(self.l4_port_to_ip)
+                    # print(self.l4_port_to_ip)
 
                     cur_target_server_mac =  self.dpid_to_mac[cur_server_leaf_dpid]
 
@@ -823,17 +826,17 @@ class SimpleSwitch13(app_manager.RyuApp):
                     # Server Switch -> Spine Switch Lower (Reverse)
 
                     actions = [parser.OFPActionOutput(out_port_server_leaf_to_spine_lower)]
-                    self.add_flow(datapath, match_receive, actions, idle_timeout=0.5, cookie=cookie)
+                    self.add_flow(datapath, match_receive, actions, idle_timeout=5, cookie=cookie)
 
                     # Spine Switch Lower -> Spine Switch Upper (Reverse)
 
                     actions = [parser.OFPActionOutput(out_port_spine_lower_to_spine_upper)]
-                    self.add_flow(spine_datapath_lower, match_receive, actions, idle_timeout=0.5, cookie=cookie)
+                    self.add_flow(spine_datapath_lower, match_receive, actions, idle_timeout=5, cookie=cookie)
 
                     # Spine Switch Upper -> Client Switch (Reverse)
 
                     actions = [parser.OFPActionOutput(out_port_spine_upper_to_client_leaf)]
-                    self.add_flow(spine_datapath_upper, match_receive, actions, idle_timeout=0.5, cookie=cookie)
+                    self.add_flow(spine_datapath_upper, match_receive, actions, idle_timeout=5, cookie=cookie)
 
                     # Client Switch -> Client Host (Reverse)
 
@@ -845,7 +848,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                         parser.OFPActionOutput(out_port_client_leaf_to_client)
                     ]
 
-                    self.add_flow(client_leaf_datapath, match_receive, actions, idle_timeout=0.5, cookie=cookie)
+                    self.add_flow(client_leaf_datapath, match_receive, actions, idle_timeout=5, cookie=cookie)
 
 
 
@@ -854,6 +857,9 @@ class SimpleSwitch13(app_manager.RyuApp):
                 udp_header = pkt.get_protocols(udp.udp)[0]
 
                 if ip_header.src in self.client_ips:
+
+                    if self.l4_port_to_ip.get(udp_header.src_port, None) != None:
+                        return
                 
                     if self.is_ih:
                         cur_spine_dpid_upper, cur_spine_dpid_lower, cur_server_leaf_dpid = self.select_next_dpids(ip_header.src)
@@ -866,7 +872,7 @@ class SimpleSwitch13(app_manager.RyuApp):
 
                     if self.is_lc or self.is_lb or self.is_lp:
                         self.spine_active_ports[cur_spine_dpid_lower].append(udp_header.src_port)
-                        print("cur_server_leaf_dpid: " + str(cur_server_leaf_dpid))
+                        # print("cur_server_leaf_dpid: " + str(cur_server_leaf_dpid))
                         self.server_leaf_active_ports[cur_server_leaf_dpid].append(udp_header.src_port)
                         # print(self.spine_active_ports)
 
@@ -889,13 +895,13 @@ class SimpleSwitch13(app_manager.RyuApp):
                     out_port_spine_upper_to_spine_lower = self.mac_to_port[cur_spine_dpid_upper][cur_spine_dpid_lower]
 
                     # self.logger.info(str(dpid) + " udp_port: " + str(udp_header.src_port))
-                    self.logger.info(str(dpid) + " : " + str(eth.ethertype) + ", " + str(src) + ", " + str(dst) + ", " + str(ip_header.proto) +
-                        ", " + str(ip_header.src) + ", " + str(ip_header.dst) + ", " + str(udp_header.src_port) + ", " + str(udp_header.dst_port))
+                    # self.logger.info(str(dpid) + " : " + str(eth.ethertype) + ", " + str(src) + ", " + str(dst) + ", " + str(ip_header.proto) +
+                    #     ", " + str(ip_header.src) + ", " + str(ip_header.dst) + ", " + str(udp_header.src_port) + ", " + str(udp_header.dst_port))
                     
-                    # self.logger.info("Current Path: " + src + " -> " + str(dpid) + " -> " + str(cur_spine_dpid_upper) +
-                    #     " -> " + str(cur_spine_dpid_lower) + " -> " + str(cur_server_leaf_dpid) + " -> " + self.dpid_to_mac[cur_server_leaf_dpid])
+                    self.logger.info("Current Path: " + src + " -> " + str(dpid) + " -> " + str(cur_spine_dpid_upper) +
+                        " -> " + str(cur_spine_dpid_lower) + " -> " + str(cur_server_leaf_dpid) + " -> " + self.dpid_to_mac[cur_server_leaf_dpid])
 
-                    # Client Switch -> Spine Switch Upper
+                    
 
                     match_send = parser.OFPMatch(
                         # in_port=in_port,
@@ -909,6 +915,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                         udp_dst=udp_header.dst_port
                     )
 
+                    # Client Switch -> Spine Switch Upper
                     actions = [parser.OFPActionOutput(out_port_client_leaf_to_spine_upper)]
                     self.add_flow(datapath, match_send, actions, idle_timeout=5, cookie=cookie)
 
@@ -967,17 +974,17 @@ class SimpleSwitch13(app_manager.RyuApp):
                     # Server Switch -> Spine Switch Lower (Reverse)
 
                     actions = [parser.OFPActionOutput(out_port_server_leaf_to_spine_lower)]
-                    self.add_flow(datapath, match_receive, actions, idle_timeout=0.5, cookie=cookie)
+                    self.add_flow(datapath, match_receive, actions, idle_timeout=5, cookie=cookie)
 
                     # Spine Switch Lower -> Spine Switch Upper (Reverse)
 
                     actions = [parser.OFPActionOutput(out_port_spine_lower_to_spine_upper)]
-                    self.add_flow(spine_datapath_lower, match_receive, actions, idle_timeout=0.5, cookie=cookie)
+                    self.add_flow(spine_datapath_lower, match_receive, actions, idle_timeout=5, cookie=cookie)
 
                     # Spine Switch Upper -> Client Switch (Reverse)
 
                     actions = [parser.OFPActionOutput(out_port_spine_upper_to_client_leaf)]
-                    self.add_flow(spine_datapath_upper, match_receive, actions, idle_timeout=0.5, cookie=cookie)
+                    self.add_flow(spine_datapath_upper, match_receive, actions, idle_timeout=5, cookie=cookie)
 
                     # Client Switch -> Client Host (Reverse)
 
@@ -989,7 +996,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                         parser.OFPActionOutput(out_port_client_leaf_to_client)
                     ]
 
-                    self.add_flow(client_leaf_datapath, match_receive, actions, idle_timeout=0.5, cookie=cookie)
+                    self.add_flow(client_leaf_datapath, match_receive, actions, idle_timeout=5, cookie=cookie)
             return
            
 
@@ -1089,4 +1096,3 @@ class SimpleSwitch13(app_manager.RyuApp):
         #                   msg.duration_sec, msg.duration_nsec,
         #                   msg.idle_timeout, msg.hard_timeout,
         #                   msg.packet_count, msg.byte_count, msg.match)
-        
