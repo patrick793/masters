@@ -16,9 +16,9 @@ class MyTopo( Topo ):
 
     # Only change servers and clients
 
-    servers = 2
-    clients = 1
-    spine_switches = 2
+    servers = 3
+    clients = 3
+    spine_switches = 1
 
     hosts = []
     switches = []

@@ -1,0 +1,39 @@
+#! /bin/bash
+
+HOST=$1
+TCPUDP=$2
+PARALLEL=$3
+MTIME=$4
+first="04/02/2018"
+
+sudo rm -R "$HOST".txt "$HOST"T.txt
+
+
+current_epoch=$(date +%s)
+target_epoch=$(date -d "$first $MTIME" +%s)
+
+sleep_seconds=$(( $target_epoch - $current_epoch ))
+
+echo $sleep_seconds
+
+sleep $sleep_seconds
+
+
+if [ $TCPUDP == "u" ]; then
+	counter=1
+	while [ $counter -le 1 ]
+	do
+		./start_iperf_client "$HOST" "$TCPUDP" "$PARALLEL" &
+		((counter++))
+		sleep 1
+	done
+elif [ $TCPUDP == "t" ]; then
+	counter=1
+	while [ $counter -le 10 ]
+	do
+		./start_iperf_client "$HOST" "$TCPUDP" "$PARALLEL" &
+		((counter++))
+		sleep 1
+	done
+fi
+
