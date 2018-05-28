@@ -113,13 +113,6 @@ class SimpleSwitch13(app_manager.RyuApp):
             self.cur_spine_index = 0
             self.cur_server_leaf_index = 0
 
-        if self.is_rb:
-            self.max_weight = 1
-            while self.max_weight * 2 < sys.maxsize:
-                self.max_weight*=2
-            self.spine_weights = []
-            self.server_leaf_weights = []
-
         if self.is_lc or self.is_lb or self.is_lp:
             self.spine_active_ports = {}
             self.server_leaf_active_ports = {}
@@ -181,12 +174,6 @@ class SimpleSwitch13(app_manager.RyuApp):
         #     bands = [parser.OFPMeterBandDrop(type_=ofproto.OFPMBT_DROP, len_=0, rate=1000, burst_size=10)]
         #     req=parser.OFPMeterMod(datapath=datapath, command=ofproto.OFPMC_ADD, flags=ofproto.OFPMF_KBPS, meter_id=99, bands=bands)
         #     datapath.send_msg(req)
-
-        if self.is_rb:
-            for x in range(len(self.spine_dpids) / 2):
-                self.spine_weights.append({"w" : self.max_weight, "i" : x})
-            for x in self.server_leaf_dpids:
-                self.server_leaf_weights.append({"w" : self.max_weight, "i" : x-1})
 
         if self.is_lc or self.is_lb or self.is_lp:
             for x in range(len(self.spine_dpids) / 2):
@@ -660,27 +647,10 @@ class SimpleSwitch13(app_manager.RyuApp):
                 
             return cur_spine_dpid_upper, cur_spine_dpid_lower, cur_server_leaf_dpid
         elif self.is_rb:
-            r = randint(0, self.spine_weights[0]["w"])
-            for i, x in enumerate(self.spine_weights):
-                if r <= x["w"]:
-                    cur_spine_dpid_upper = self.spine_dpids[x["i"] + len(self.spine_dpids) / 2]
-                    cur_spine_dpid_lower = self.spine_dpids[x["i"]]
-                    self.spine_weights[i]["w"] /= 2
-                    if self.spine_weights[i]["w"] == 1:
-                        for w in range(len(self.spine_weights)):
-                            self.spine_weights[w]["w"] *= self.max_weight
-                    break
-            r = randint(0, self.server_leaf_weights[0]["w"])
-            for i, x in enumerate(self.server_leaf_weights):
-                if r <= x["w"]:
-                    cur_server_leaf_dpid = self.server_leaf_dpids[x["i"]]
-                    self.server_leaf_weights[i]["w"] /= 2
-                    if self.server_leaf_weights[i]["w"] == 1:
-                        for w in range(len(self.server_leaf_weights)):
-                            self.server_leaf_weights[w]["w"] *= self.max_weight
-                    break
-            self.spine_weights.sort(reverse=True)
-            self.server_leaf_weights.sort(reverse=True)
+            x = randint(0, len(self.spine_dpids) / 2 - 1)
+            cur_spine_dpid_upper = self.spine_dpids[x + len(self.spine_dpids) / 2]
+            cur_spine_dpid_lower = self.spine_dpids[x]
+            cur_server_leaf_dpid = self.server_leaf_dpids[randint(0, len(self.server_leaf_dpids) - 1)]
             return cur_spine_dpid_upper, cur_spine_dpid_lower, cur_server_leaf_dpid
         elif self.is_ih:
             if src_ip == None:
