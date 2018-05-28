@@ -28,7 +28,7 @@ if [ $TCPUDP == "u" ]; then
 	do
 		./start_iperf_client "$HOST" "$TCPUDP" "$PARALLEL" &
 		((counter++))
-		sleep 1
+		# sleep 1
 	done
 elif [ $TCPUDP == "t" ]; then
 	counter=1
@@ -36,12 +36,12 @@ elif [ $TCPUDP == "t" ]; then
 	do
 		./start_iperf_client "$HOST" "$TCPUDP" "$PARALLEL" &
 		((counter++))
-		sleep 1
+		# sleep 1
 	done
 fi
 
 if [ $? -eq 0 ]; then
-	sleep 3
+	# sleep 1
 	
 	# if [ "cat ryu/ryu/app/sample.py | grep True | grep is_rr" ]
 	# then
