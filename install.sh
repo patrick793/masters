@@ -19,4 +19,11 @@ sudo pip install oslo.config
 sudo pip install msgpack
 sudo pip install eventlet==0.18.2
 
-sudo apt-get install unzip
+sudo apt-get install unzip -y
+
+cd masters
+cd modified-iperf-2.0.10
+sudo apt-get remove iperf -y
+sudo ./configure
+sudo make
+sudo make install
