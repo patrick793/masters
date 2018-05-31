@@ -776,7 +776,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                     out_port_server_leaf_to_server = self.mac_to_port[cur_server_leaf_dpid][cur_target_server_mac]
                     out_port_spine_upper_to_spine_lower = self.mac_to_port[cur_spine_dpid_upper][cur_spine_dpid_lower]
 
-                    self.logger.info("Current Path: " + src + " -> " + str(dpid) + " -> " + str(cur_spine_dpid_upper) +
+                    self.count_in += 1
+                    self.logger.info(str(self.count_in) + " Current Path: " + src + " -> " + str(dpid) + " -> " + str(cur_spine_dpid_upper) +
                         " -> " + str(cur_spine_dpid_lower) + " -> " + str(cur_server_leaf_dpid) + " -> " + self.dpid_to_mac[cur_server_leaf_dpid])
 
                     # Client Switch -> Spine Switch Upper

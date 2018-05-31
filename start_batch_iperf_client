@@ -24,19 +24,19 @@ sleep $sleep_seconds
 
 if [ $TCPUDP == "u" ]; then
 	counter=1
-	while [ $counter -le 1 ]
+	while [ $counter -le $PARALLEL ]
 	do
-		./start_iperf_client "$HOST" "$TCPUDP" "$PARALLEL" &
+		./start_iperf_client "$HOST" "$TCPUDP" 1 &
 		((counter++))
-		# sleep 1
+		sleep 0.2
 	done
 elif [ $TCPUDP == "t" ]; then
 	counter=1
-	while [ $counter -le 1 ]
+	while [ $counter -le $PARALLEL ]
 	do
-		./start_iperf_client "$HOST" "$TCPUDP" "$PARALLEL" &
+		./start_iperf_client "$HOST" "$TCPUDP" 1 &
 		((counter++))
-		# sleep 1
+		sleep 0.2
 	done
 fi
 
