@@ -54,9 +54,9 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.server_cnt = 3
 
 
-        self.is_rr = False  # Round-robin
+        self.is_rr = True  # Round-robin
         self.is_rb = False # Random
-        self.is_ih = True # IP Hashing
+        self.is_ih = False # IP Hashing
         self.is_lc = False  # Least connections
         self.is_lb = False   # Least bandwidth
         self.is_lp = False   # Least packets
