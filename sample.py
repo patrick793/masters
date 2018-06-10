@@ -428,7 +428,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         #                      stat.rx_packets, stat.rx_bytes, stat.rx_errors,
         #                      stat.tx_packets, stat.tx_bytes, stat.tx_errors)
 
- def remove_flows(self, datapath, table_id):
+    def remove_flows(self, datapath, table_id):
         """Removing all flow entries."""
         parser = datapath.ofproto_parser
         ofproto = datapath.ofproto
@@ -439,7 +439,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         print "deleting all flow entries in table ", table_id
         datapath.send_msg(flow_mod)
 
-def remove_table_flows(self, datapath, table_id, match, instructions):
+    def remove_table_flows(self, datapath, table_id, match, instructions):
         """Create OFP flow mod message to remove flows from table."""
         ofproto = datapath.ofproto
         flow_mod = datapath.ofproto_parser.OFPFlowMod(datapath, 0, 0, table_id,
