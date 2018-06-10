@@ -10,7 +10,7 @@ cd ryu
 sudo python ./setup.py install
 cd ..
 
-sudo apt-get install python-pip
+sudo apt-get install python-pip -y
 sudo pip install webob
 sudo pip install tinyrpc
 sudo pip install routes
@@ -18,8 +18,6 @@ sudo pip install ovs
 sudo pip install oslo.config
 sudo pip install msgpack
 sudo pip install eventlet==0.18.2
-
-sudo apt-get install unzip -y
 
 cd masters
 cd modified-iperf-2.0.10

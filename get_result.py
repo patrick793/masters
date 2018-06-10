@@ -113,7 +113,7 @@ def main():
         print("Ave.Server TP:\t" + str(mean(server_bandwidths)) + " Mbits/sec")        
         print("Tot.Reads:\t" + str(sum(reads)))
         print("Ave.Client TP:\t" + str(mean(client_bandwidths)) + " Mbits/sec")
-        print("Ave.Retries:\t" + str(mean(retries)))
+        print("Tot.Retries:\t" + str(sum(retries)))
         print("Ave.RTT:\t" + str(mean(rtts)))
         print("\nCopy Below!")
         print(str(mean(conn_est_interval)) + "," + \
