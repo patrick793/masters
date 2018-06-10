@@ -459,7 +459,8 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         dpid = datapath.id
 
-        self.remove_flows(datapath, n) for n in [0, 1]]
+        self.remove_flows(datapath, 0)
+        self.remove_flows(datapath, 1)
 
         # install table-miss flow entry
         #
