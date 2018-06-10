@@ -109,7 +109,7 @@ def main():
         print("Ave.Delay(Ryu):\t" + str(mean(conn_est_interval)) + " ms")
         print("Transfer Time:\t" + str(max(total_times)) + " secs")
         print("Total Transfer:\t" + str(sum(total_transfers)) + " MBytes")
-        print(total_transfers);
+        # print(total_transfers);
         print("Ave.Server TP:\t" + str(mean(server_bandwidths)) + " Mbits/sec")        
         print("Tot.Reads:\t" + str(sum(reads)))
         print("Ave.Client TP:\t" + str(mean(client_bandwidths)) + " Mbits/sec")
