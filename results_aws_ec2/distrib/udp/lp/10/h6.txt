@@ -1,87 +1,63 @@
 ------------------------------------------------------------
-Client connecting to 10.0.0.100, UDP port 5001 with pid 15457
+Client connecting to 10.0.0.100, UDP port 5001 with pid 23569
 Sending 1470 byte datagrams, IPG target: 11215.21 us (kalman adjust)
 UDP buffer size:  208 KByte (default)
 ------------------------------------------------------------
-[ 43] local 10.0.0.6 port 42491 connected with 10.0.0.100 port 5001 (Time: 1527807200352130208)
+[ 43] local 10.0.0.6 port 57610 connected with 10.0.0.100 port 5001 (Time: 1528553210014898860)
 ------------------------------------------------------------
-Client connecting to 10.0.0.100, UDP port 5001 with pid 15471
+Client connecting to 10.0.0.100, UDP port 5001 with pid 23576
 Sending 1470 byte datagrams, IPG target: 11215.21 us (kalman adjust)
 UDP buffer size:  208 KByte (default)
 ------------------------------------------------------------
-[ 43] local 10.0.0.6 port 60611 connected with 10.0.0.100 port 5001 (Time: 1527807200553975302)
+[ 43] local 10.0.0.6 port 52130 connected with 10.0.0.100 port 5001 (Time: 1528553210215542085)
 ------------------------------------------------------------
-Client connecting to 10.0.0.100, UDP port 5001 with pid 15491
+Client connecting to 10.0.0.100, UDP port 5001 with pid 23583
 Sending 1470 byte datagrams, IPG target: 11215.21 us (kalman adjust)
 UDP buffer size:  208 KByte (default)
 ------------------------------------------------------------
-[ 43] local 10.0.0.6 port 52083 connected with 10.0.0.100 port 5001 (Time: 1527807200755588039)
+[ 43] local 10.0.0.6 port 45510 connected with 10.0.0.100 port 5001 (Time: 1528553210417447820)
 ------------------------------------------------------------
-Client connecting to 10.0.0.100, UDP port 5001 with pid 15512
+Client connecting to 10.0.0.100, UDP port 5001 with pid 23597
 Sending 1470 byte datagrams, IPG target: 11215.21 us (kalman adjust)
 UDP buffer size:  208 KByte (default)
 ------------------------------------------------------------
-[ 43] local 10.0.0.6 port 41145 connected with 10.0.0.100 port 5001 (Time: 1527807200956589580)
+[ 43] local 10.0.0.6 port 41098 connected with 10.0.0.100 port 5001 (Time: 1528553210619095059)
 ------------------------------------------------------------
-Client connecting to 10.0.0.100, UDP port 5001 with pid 15533
+Client connecting to 10.0.0.100, UDP port 5001 with pid 23618
 Sending 1470 byte datagrams, IPG target: 11215.21 us (kalman adjust)
 UDP buffer size:  208 KByte (default)
 ------------------------------------------------------------
-[ 43] local 10.0.0.6 port 36430 connected with 10.0.0.100 port 5001 (Time: 1527807201157559080)
+[ 43] local 10.0.0.6 port 54706 connected with 10.0.0.100 port 5001 (Time: 1528553210820717447)
 ------------------------------------------------------------
-Client connecting to 10.0.0.100, UDP port 5001 with pid 15554
+Client connecting to 10.0.0.100, UDP port 5001 with pid 23639
 Sending 1470 byte datagrams, IPG target: 11215.21 us (kalman adjust)
 UDP buffer size:  208 KByte (default)
 ------------------------------------------------------------
-[ 43] local 10.0.0.6 port 43785 connected with 10.0.0.100 port 5001 (Time: 1527807201359027407)
+[ 43] local 10.0.0.6 port 53570 connected with 10.0.0.100 port 5001 (Time: 1528553211021400964)
 ------------------------------------------------------------
-Client connecting to 10.0.0.100, UDP port 5001 with pid 15575
+Client connecting to 10.0.0.100, UDP port 5001 with pid 23660
 Sending 1470 byte datagrams, IPG target: 11215.21 us (kalman adjust)
 UDP buffer size:  208 KByte (default)
 ------------------------------------------------------------
-[ 43] local 10.0.0.6 port 38536 connected with 10.0.0.100 port 5001 (Time: 1527807201559763198)
+[ 43] local 10.0.0.6 port 36046 connected with 10.0.0.100 port 5001 (Time: 1528553211222105679)
 ------------------------------------------------------------
-Client connecting to 10.0.0.100, UDP port 5001 with pid 15596
+Client connecting to 10.0.0.100, UDP port 5001 with pid 23681
 Sending 1470 byte datagrams, IPG target: 11215.21 us (kalman adjust)
 UDP buffer size:  208 KByte (default)
 ------------------------------------------------------------
-[ 43] local 10.0.0.6 port 41124 connected with 10.0.0.100 port 5001 (Time: 1527807201760637502)
+[ 43] local 10.0.0.6 port 46923 connected with 10.0.0.100 port 5001 (Time: 1528553211423697297)
 ------------------------------------------------------------
-Client connecting to 10.0.0.100, UDP port 5001 with pid 15617
+Client connecting to 10.0.0.100, UDP port 5001 with pid 23702
 Sending 1470 byte datagrams, IPG target: 11215.21 us (kalman adjust)
 UDP buffer size:  208 KByte (default)
 ------------------------------------------------------------
-[ 43] local 10.0.0.6 port 59835 connected with 10.0.0.100 port 5001 (Time: 1527807201961931838)
+[ 43] local 10.0.0.6 port 55263 connected with 10.0.0.100 port 5001 (Time: 1528553211624530850)
 ------------------------------------------------------------
-Client connecting to 10.0.0.100, UDP port 5001 with pid 15638
+Client connecting to 10.0.0.100, UDP port 5001 with pid 23723
 Sending 1470 byte datagrams, IPG target: 11215.21 us (kalman adjust)
 UDP buffer size:  208 KByte (default)
 ------------------------------------------------------------
-[ 43] local 10.0.0.6 port 46087 connected with 10.0.0.100 port 5001 (Time: 1527807202162681805)
-TID [ 43]
-Interval 0.00-10.02 sec
-Transfer 1.25 MBytes
-Bandwidth 1.05 Mbits/sec
-PPSO   89 pps
-[ 43] Sent 893 datagrams
-TotalTime 10.015226 sec
-
-TID [ 43]
-Interval 0.00-10.02 sec
-Transfer 1.25 MBytes
-Bandwidth 1.05 Mbits/sec
-PPSO   89 pps
-[ 43] Sent 893 datagrams
-TotalTime 10.015225 sec
-
-TID [ 43]
-Interval 0.00-10.02 sec
-Transfer 1.25 MBytes
-Bandwidth 1.05 Mbits/sec
-PPSO   89 pps
-[ 43] Sent 893 datagrams
-TotalTime 10.015240 sec
-
+[ 43] local 10.0.0.6 port 48502 connected with 10.0.0.100 port 5001 (Time: 1528553211825417106)
 TID [ 43]
 Interval 0.00-10.02 sec
 Transfer 1.25 MBytes
@@ -104,7 +80,7 @@ Transfer 1.25 MBytes
 Bandwidth 1.05 Mbits/sec
 PPSO   89 pps
 [ 43] Sent 893 datagrams
-TotalTime 10.015220 sec
+TotalTime 10.015214 sec
 
 TID [ 43]
 Interval 0.00-10.02 sec
@@ -120,21 +96,45 @@ Transfer 1.25 MBytes
 Bandwidth 1.05 Mbits/sec
 PPSO   89 pps
 [ 43] Sent 893 datagrams
-TotalTime 10.015236 sec
-
-TID [ 43]
-Interval 0.00-10.02 sec
-Transfer 1.25 MBytes
-Bandwidth 1.05 Mbits/sec
-PPSO   89 pps
-[ 43] Sent 893 datagrams
-TotalTime 10.015231 sec
-
-TID [ 43]
-Interval 0.00-10.02 sec
-Transfer 1.25 MBytes
-Bandwidth 1.05 Mbits/sec
-PPSO   89 pps
-[ 43] Sent 893 datagrams
 TotalTime 10.015217 sec
+
+TID [ 43]
+Interval 0.00-10.02 sec
+Transfer 1.25 MBytes
+Bandwidth 1.05 Mbits/sec
+PPSO   89 pps
+[ 43] Sent 893 datagrams
+TotalTime 10.015216 sec
+
+TID [ 43]
+Interval 0.00-10.02 sec
+Transfer 1.25 MBytes
+Bandwidth 1.05 Mbits/sec
+PPSO   89 pps
+[ 43] Sent 893 datagrams
+TotalTime 10.015225 sec
+
+TID [ 43]
+Interval 0.00-10.02 sec
+Transfer 1.25 MBytes
+Bandwidth 1.05 Mbits/sec
+PPSO   89 pps
+[ 43] Sent 893 datagrams
+TotalTime 10.015218 sec
+
+TID [ 43]
+Interval 0.00-10.02 sec
+Transfer 1.25 MBytes
+Bandwidth 1.05 Mbits/sec
+PPSO   89 pps
+[ 43] Sent 893 datagrams
+TotalTime 10.015221 sec
+
+TID [ 43]
+Interval 0.00-10.02 sec
+Transfer 1.25 MBytes
+Bandwidth 1.05 Mbits/sec
+PPSO   89 pps
+[ 43] Sent 893 datagrams
+TotalTime 10.015214 sec
 
