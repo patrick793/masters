@@ -447,7 +447,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                                                       1,
                                                       ofproto.OFPCML_NO_BUFFER,
                                                       ofproto.OFPP_ANY,
-                                                      OFPG_ANY, 0,
+                                                      0xffffffff, 0,
                                                       match, instructions)
         return flow_mod
 
