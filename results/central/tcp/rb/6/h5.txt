@@ -1,0 +1,102 @@
+------------------------------------------------------------
+Client connecting to 10.0.0.100, TCP port 5001 with pid 9345
+Write buffer size:  128 KByte
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[ 35] local 10.0.0.5 port 57948 connected with 10.0.0.100 port 5001 (Time: 1528715072405609982)
+------------------------------------------------------------
+Client connecting to 10.0.0.100, TCP port 5001 with pid 9357
+Write buffer size:  128 KByte
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[ 35] local 10.0.0.5 port 57952 connected with 10.0.0.100 port 5001 (Time: 1528715072629622206)
+------------------------------------------------------------
+Client connecting to 10.0.0.100, TCP port 5001 with pid 9369
+Write buffer size:  128 KByte
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[ 35] local 10.0.0.5 port 57956 connected with 10.0.0.100 port 5001 (Time: 1528715072821446169)
+------------------------------------------------------------
+Client connecting to 10.0.0.100, TCP port 5001 with pid 9387
+Write buffer size:  128 KByte
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[ 35] local 10.0.0.5 port 57962 connected with 10.0.0.100 port 5001 (Time: 1528715073017406313)
+------------------------------------------------------------
+Client connecting to 10.0.0.100, TCP port 5001 with pid 9405
+Write buffer size:  128 KByte
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[ 35] local 10.0.0.5 port 57968 connected with 10.0.0.100 port 5001 (Time: 1528715073205574766)
+------------------------------------------------------------
+Client connecting to 10.0.0.100, TCP port 5001 with pid 9423
+Write buffer size:  128 KByte
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[ 35] local 10.0.0.5 port 57974 connected with 10.0.0.100 port 5001 (Time: 1528715073429679382)
+TID [ 35]
+Interval 0.00-10.03 sec
+Transfer 2.00 MBytes
+Bandwidth 1.67 Mbits/sec
+WriteO 1
+ErrorO 0
+RetryO 1
+Cwnd 289K
+RTTO 2162328 us
+TotalTime 10.031070 sec
+
+TID [ 35]
+Interval 0.00-13.12 sec
+Transfer 1.78 MBytes
+Bandwidth 1.14 Mbits/sec
+WriteO 1
+ErrorO 0
+RetryO 61
+Cwnd 139K
+RTTO 2305058 us
+TotalTime 13.115624 sec
+
+TID [ 35]
+Interval 0.00-15.01 sec
+Transfer 2.71 MBytes
+Bandwidth 1.52 Mbits/sec
+WriteO 1
+ErrorO 0
+RetryO 86
+Cwnd 216K
+RTTO 2020652 us
+TotalTime 15.007432 sec
+
+TID [ 35]
+Interval 0.00-13.98 sec
+Transfer 1.65 MBytes
+Bandwidth  991 Kbits/sec
+WriteO 1
+ErrorO 0
+RetryO 63
+Cwnd 154K
+RTTO 2014238 us
+TotalTime 13.983399 sec
+
+TID [ 35]
+Interval 0.00-14.85 sec
+Transfer 2.34 MBytes
+Bandwidth 1.32 Mbits/sec
+WriteO 1
+ErrorO 0
+RetryO 86
+Cwnd 89K
+RTTO 1950638 us
+TotalTime 14.847606 sec
+
+TID [ 35]
+Interval 0.00-14.98 sec
+Transfer 1.96 MBytes
+Bandwidth 1.10 Mbits/sec
+WriteO 1
+ErrorO 0
+RetryO 69
+Cwnd 152K
+RTTO 1836188 us
+TotalTime 14.975456 sec
+
