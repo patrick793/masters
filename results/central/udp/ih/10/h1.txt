@@ -1,0 +1,166 @@
+------------------------------------------------------------
+Server listening on UDP port 5001 with pid 2792
+Receiving 1470 byte datagrams
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[ 35] local 10.0.0.1 port 5001 connected with 10.0.0.100 port 47525 (Time: 1528743950368794980)
+[ 36] local 10.0.0.1 port 5001 connected with 10.0.0.100 port 33710 (Time: 1528743950571086364)
+[ 37] local 10.0.0.1 port 5001 connected with 10.0.0.100 port 60692 (Time: 1528743950772955691)
+[ 38] local 10.0.0.1 port 5001 connected with 10.0.0.100 port 47377 (Time: 1528743950974762501)
+[ 39] local 10.0.0.1 port 5001 connected with 10.0.0.100 port 45599 (Time: 1528743951176677121)
+[ 40] local 10.0.0.1 port 5001 connected with 10.0.0.100 port 34434 (Time: 1528743951398786488)
+[ 41] local 10.0.0.1 port 5001 connected with 10.0.0.100 port 39261 (Time: 1528743951671357342)
+[ 42] local 10.0.0.1 port 5001 connected with 10.0.0.100 port 57755 (Time: 1528743952024484429)
+[ 43] local 10.0.0.1 port 5001 connected with 10.0.0.100 port 41844 (Time: 1528743952438200199)
+[ 44] local 10.0.0.1 port 5001 connected with 10.0.0.100 port 39501 (Time: 1528743952912914361)
+TID [ 35]
+Interval 0.00-11.46 sec
+Transfer  345 KBytes
+Bandwidth  246 Kbits/sec
+Jitter 16.518122 ms
+LostO  652
+TotalO   892
+RateO 73%
+LatencyAvg 460.026 ms
+LatencyMin  0.017 ms
+LatencyMax 1458.217 ms
+LatencyStdev 507.163 ms
+PPSO   20 pps
+TotalTime 11.461476 sec
+
+TID [ 36]
+Interval 0.00-11.66 sec
+Transfer  444 KBytes
+Bandwidth  312 Kbits/sec
+Jitter 15.696028 ms
+LostO  583
+TotalO   892
+RateO 65%
+LatencyAvg 698.373 ms
+LatencyMin  0.013 ms
+LatencyMax 1458.045 ms
+LatencyStdev 537.142 ms
+PPSO   26 pps
+TotalTime 11.663478 sec
+
+TID [ 37]
+Interval 0.00-11.86 sec
+Transfer  380 KBytes
+Bandwidth  263 Kbits/sec
+Jitter 15.689373 ms
+LostO  627
+TotalO   892
+RateO 70%
+LatencyAvg 693.117 ms
+LatencyMin  0.022 ms
+LatencyMax 1457.930 ms
+LatencyStdev 528.381 ms
+PPSO   22 pps
+TotalTime 11.864260 sec
+
+TID [ 38]
+Interval 0.00-12.07 sec
+Transfer  260 KBytes
+Bandwidth  176 Kbits/sec
+Jitter 16.547136 ms
+LostO  711
+TotalO   892
+RateO 80%
+LatencyAvg 574.778 ms
+LatencyMin  0.028 ms
+LatencyMax 1458.068 ms
+LatencyStdev 499.427 ms
+PPSO   15 pps
+TotalTime 12.066318 sec
+
+TID [ 39]
+Interval 0.00-12.27 sec
+Transfer  350 KBytes
+Bandwidth  234 Kbits/sec
+Jitter 15.658646 ms
+LostO  648
+TotalO   892
+RateO 73%
+LatencyAvg 825.792 ms
+LatencyMin  0.040 ms
+LatencyMax 1457.947 ms
+LatencyStdev 480.696 ms
+PPSO   19 pps
+TotalTime 12.267078 sec
+
+TID [ 41]
+Interval 0.00-12.42 sec
+Transfer  459 KBytes
+Bandwidth  303 Kbits/sec
+Jitter 0.170732 ms
+LostO  573
+TotalO   893
+RateO 64%
+LatencyAvg 1048.478 ms
+LatencyMin 99.142 ms
+LatencyMax 1209.640 ms
+LatencyStdev 324.775 ms
+PPSO   25 pps
+TotalTime 12.421868 sec
+
+TID [ 40]
+Interval 0.00-12.47 sec
+Transfer  205 KBytes
+Bandwidth  135 Kbits/sec
+Jitter 16.639356 ms
+LostO  749
+TotalO   892
+RateO 84%
+LatencyAvg 707.645 ms
+LatencyMin 17.322 ms
+LatencyMax 1457.947 ms
+LatencyStdev 458.140 ms
+PPSO   11 pps
+TotalTime 12.469085 sec
+
+TID [ 42]
+Interval 0.00-12.62 sec
+Transfer  652 KBytes
+Bandwidth  423 Kbits/sec
+Jitter 0.455210 ms
+LostO  439
+TotalO   893
+RateO 49%
+LatencyAvg 1136.830 ms
+LatencyMin 247.381 ms
+LatencyMax 1209.678 ms
+LatencyStdev 210.640 ms
+PPSO   35 pps
+TotalTime 12.622699 sec
+
+TID [ 43]
+Interval 0.00-12.82 sec
+Transfer  248 KBytes
+Bandwidth  159 Kbits/sec
+Jitter 0.630168 ms
+LostO  720
+TotalO   893
+RateO 81%
+LatencyAvg 1110.074 ms
+LatencyMin 461.405 ms
+LatencyMax 1209.741 ms
+LatencyStdev 207.710 ms
+PPSO   13 pps
+TotalTime 12.824677 sec
+
+TID [ 44]
+Interval 0.00-13.02 sec
+Transfer  851 KBytes
+Bandwidth  536 Kbits/sec
+Jitter 0.960082 ms
+LostO  300
+TotalO   893
+RateO 34%
+LatencyAvg 1198.302 ms
+LatencyMin 739.309 ms
+LatencyMax 1209.665 ms
+LatencyStdev 63.886 ms
+PPSO   45 pps
+TotalTime 13.017068 sec
+
+[SUM] 0.00-13.02 sec  4.10 MBytes  2.64 Mbits/sec  231 pps
