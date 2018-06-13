@@ -1,29 +1,36 @@
 #!/usr/bin/python
 
 import re
+import os
 
-def main():
+
+def main(path = ".", printresults = True):
+    # Adjust current path
+    os.chdir(path)
+
 
     is_tcp = False
     is_udp = False
 
+    # For Global Results
     port_to_client_times = {}
     conn_est_interval = []
     client_bandwidths = []
-    reads = []
     total_times = []
     total_transfers = []
     server_bandwidths = []
+
+    # For TCP Results Only
+    reads = []
     retries = []
     rtts = []
 
-    transfers = []
+    # For UDP Results Only
     ppss = []
     jitters = []
     lost_pkts = []
     total_pkts = []
     latencies = []
-
 
     server_cnt = 1
     client_cnt = 4
@@ -103,54 +110,83 @@ def main():
                     
                     
         server_cnt += 1
+    if printresults:
+        # Print Results
+        if is_tcp:
+            print("Ave.Delay(Ryu):\t" + str(mean(conn_est_interval)) + " ms")
+            print("Transfer Time:\t" + str(max(total_times)) + " secs")
+            print("Total Transfer:\t" + str(sum(total_transfers)) + " MBytes")
+            print("Ave.Server TP:\t" + str(mean(server_bandwidths)) + " Mbits/sec")
+            print("Tot.Reads:\t" + str(sum(reads)))
+            print("Ave.Client TP:\t" + str(mean(client_bandwidths)) + " Mbits/sec")
+            print("Tot.Retries:\t" + str(sum(retries)))
+            print("Ave.RTT:\t" + str(mean(rtts)))
+            print("\nCopy Below!")
+            print(str(mean(conn_est_interval)) + "," + \
+                str(max(total_times)) + "," + \
+                str(sum(total_transfers)) + "," + \
+                str(mean(server_bandwidths)) + "," + \
+                str(sum(reads)) + ",,,,,,,,,,," + \
+                str(mean(client_bandwidths)) + "," + \
+                str(sum(retries)) + "," + \
+                str(mean(rtts))
+            )
+        elif is_udp:
+            print("Ave.Delay(Ryu):\t" + str(mean(conn_est_interval)) + " ms")
+            print("Transfer Time:\t" + str(max(total_times)) + " secs")
+            print("Total Transfer:\t" + str(sum(total_transfers)) + "Mbytes")
+            print("Ave.Server TP:\t" + str(mean(server_bandwidths)) + " Mbits/sec")
+            print("Ave.Jitter:\t" + str(mean(jitters)) + " ms")
+            print("Tot.Loss:\t" + str(sum(lost_pkts)))
+            print("Tot.Total:\t" + str(sum(total_pkts)))
+            print("Ratio Loss:\t" + str(sum(lost_pkts) / sum(total_pkts)))
+            print("Avg.Latency:\t" + str(mean(latencies)) + " ms")
+            print("Avg.PPS:\t" + str(mean(ppss)))
+            print("Ave.Client TP:\t" + str(mean(client_bandwidths)) + " Mbits/sec")
+            print("\nCopy Below!")
+            print(str(mean(conn_est_interval)) + "," + \
+                str(max(total_times)) + "," + \
+                str(sum(total_transfers)) + "," + \
+                str(mean(server_bandwidths)) + ",," + \
+                str(mean(jitters)) + ",," + \
+                str(sum(lost_pkts)) + "," + \
+                str(sum(total_pkts)) + "," + \
+                str(sum(lost_pkts) / sum(total_pkts)) + ",," + \
+                str(mean(latencies)) + ",," + \
+                str(mean(ppss)) + ",," + \
+                str(mean(client_bandwidths))
+            )
 
-    # Print Results
+    all_results = {}
+    # Return Results
     if is_tcp:
-        print("Ave.Delay(Ryu):\t" + str(mean(conn_est_interval)) + " ms")
-        print("Transfer Time:\t" + str(max(total_times)) + " secs")
-        print("Total Transfer:\t" + str(sum(total_transfers)) + " MBytes")
-        # print(total_transfers);
-        print("Ave.Server TP:\t" + str(mean(server_bandwidths)) + " Mbits/sec")        
-        print("Tot.Reads:\t" + str(sum(reads)))
-        print("Ave.Client TP:\t" + str(mean(client_bandwidths)) + " Mbits/sec")
-        print("Tot.Retries:\t" + str(sum(retries)))
-        print("Ave.RTT:\t" + str(mean(rtts)))
-        print("\nCopy Below!")
-        print(str(mean(conn_est_interval)) + "," + \
-            str(max(total_times)) + "," + \
-            str(sum(total_transfers)) + "," + \
-            str(mean(server_bandwidths)) + "," + \
-            str(sum(reads)) + ",,,,,,,,,,," + \
-            str(mean(client_bandwidths)) + "," + \
-            str(sum(retries)) + "," + \
-            str(mean(rtts))
-        ) 
-    elif is_udp:
-        print("Ave.Delay(Ryu):\t" + str(mean(conn_est_interval)) + " ms")
-        print("Transfer Time:\t" + str(max(total_times)) + " secs")
-        print("Total Transfer:\t" + str(sum(total_transfers)) + "Mbytes")
-        print("Ave.Server TP:\t" + str(mean(server_bandwidths)) + " Mbits/sec")
-        print("Ave.Jitter:\t" + str(mean(jitters)) + " ms")
-        print("Tot.Loss:\t" + str(sum(lost_pkts)))
-        print("Tot.Total:\t" + str(sum(total_pkts)))
-        print("Ratio Loss:\t" + str(sum(lost_pkts) / sum(total_pkts)))
-        print("Avg.Latency:\t" + str(mean(latencies)) + " ms")
-        print("Avg.PPS:\t" + str(mean(ppss)))
-        print("Ave.Client TP:\t" + str(mean(client_bandwidths)) + " Mbits/sec")
-        print("\nCopy Below!")
-        print(str(mean(conn_est_interval)) + "," + \
-            str(max(total_times)) + "," + \
-            str(sum(total_transfers)) + "," + \
-            str(mean(server_bandwidths)) + ",," + \
-            str(mean(jitters)) + ",," + \
-            str(sum(lost_pkts)) + "," + \
-            str(sum(total_pkts)) + "," + \
-            str(sum(lost_pkts) / sum(total_pkts)) + ",," + \
-            str(mean(latencies)) + ",," + \
-            str(mean(ppss)) + ",," + \
-            str(mean(client_bandwidths))
-        )
-        
+        all_results["tcporudp"] = "tcp"
+        all_results["conn_est_interval"] = conn_est_interval
+        all_results["client_bandwidths"] = client_bandwidths
+        all_results["total_times"] = total_times
+        all_results["total_transfers"] = total_transfers
+        all_results["server_bandwidths"] = server_bandwidths
+        all_results["reads"] = reads
+        all_results["retries"] = retries
+        all_results["rtts"] = rtts
+        return all_results
+
+    if is_udp:
+        all_results["tcporudp"] = "udp"
+        all_results["conn_est_interval"] = conn_est_interval
+        all_results["client_bandwidths"] = client_bandwidths
+        all_results["total_times"] = total_times
+        all_results["total_transfers"] = total_transfers
+        all_results["server_bandwidths"] = server_bandwidths
+        all_results["ppss"] = ppss
+        all_results["jitters"] = jitters
+        all_results["lost_pkts"] = lost_pkts
+        all_results["total_pkts"] = total_pkts
+        all_results["latencies"] = latencies
+        return all_results
+
+    return None
+
 
 def mean(data):
     """Return the sample arithmetic mean of data."""
@@ -158,6 +194,7 @@ def mean(data):
     if n < 1:
         raise ValueError('mean requires at least one data point')
     return sum(data)/float(n) # in Python 2 use sum(data)/float(n)
+
 
 if __name__ == "__main__":
     main()
