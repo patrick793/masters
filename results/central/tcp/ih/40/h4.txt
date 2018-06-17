@@ -661,20 +661,3 @@ Cwnd 35K
 RTTO 1051250 us
 TotalTime 13.967742 sec
 
-------------------------------------------------------------
-Client connecting to 10.0.0.100, TCP port 5001 with pid 25429
-Write buffer size:  128 KByte
-TCP window size: 85.3 KByte (default)
-------------------------------------------------------------
-[ 35] local 10.0.0.4 port 35938 connected with 10.0.0.100 port 5001 (Time: 1529248528942905952)
-TID [ 35]
-Interval 0.00-10.14 sec
-Transfer 4.25 MBytes
-Bandwidth 3.52 Mbits/sec
-WriteO 1
-ErrorO 0
-RetryO 5
-Cwnd 448K
-RTTO 957274 us
-TotalTime 10.138193 sec
-

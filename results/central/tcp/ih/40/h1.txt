@@ -345,13 +345,3 @@ Reads 102
 DistBin 102:0:0:0:0:0:0:0
 TotalTime 36.850623 sec
 
-[SUM] 0.00-36.85 sec  12.8 MBytes  2.92 Mbits/sec  4294    4229:43:14:5:2:0:1:0
-[ 36] local 10.0.0.1 port 5001 connected with 10.0.0.100 port 35938 (Time: 1529248528990016355)
-TID [ 36]
-Interval 0.00-14.69 sec
-Transfer 4.25 MBytes
-Bandwidth 2.43 Mbits/sec
-Reads 1576
-DistBin 1576:0:0:0:0:0:0:0
-TotalTime 14.685247 sec
-

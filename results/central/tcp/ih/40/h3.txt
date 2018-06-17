@@ -345,13 +345,3 @@ Bandwidth 16.0 Kbits/sec
 Reads 39
 DistBin 39:0:0:0:0:0:0:0
 TotalTime 44.264247 sec
-
-TID [ 36]
-Interval 0.00-51.81 sec
-Transfer 4.25 MBytes
-Bandwidth  688 Kbits/sec
-Reads 1577
-DistBin 1577:0:0:0:0:0:0:0
-TotalTime 51.814854 sec
-
-[SUM] 0.00-51.81 sec  16.2 MBytes  2.62 Mbits/sec  5692    5640:32:15:2:3:0:0:0
