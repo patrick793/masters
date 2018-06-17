@@ -1,0 +1,420 @@
+------------------------------------------------------------
+Server listening on TCP port 5001 with pid 25677
+Read buffer size:  128 KByte
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[ 36] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44234 (Time: 1529219972393103260)
+[ 37] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53428 (Time: 1529219972684949244)
+[ 38] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 55676 (Time: 1529219972725214771)
+[ 39] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53434 (Time: 1529219972966701882)
+[ 40] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53440 (Time: 1529219973258401025)
+[ 41] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53452 (Time: 1529219973902314656)
+[ 42] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44268 (Time: 1529219974244417416)
+[ 43] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44274 (Time: 1529219974596580664)
+[ 44] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53470 (Time: 1529219974988981036)
+[ 45] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44286 (Time: 1529219975300935038)
+[ 46] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53446 (Time: 1529219975673219341)
+[ 47] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 55694 (Time: 1529219975703416869)
+[ 48] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 55700 (Time: 1529219976105834928)
+[ 49] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44304 (Time: 1529219976357378114)
+[ 50] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53494 (Time: 1529219976367460188)
+[ 51] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 55748 (Time: 1529219976719608799)
+[ 52] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44322 (Time: 1529219977343496393)
+[ 53] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 55724 (Time: 1529219977444136603)
+[ 54] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53516 (Time: 1529219977695714876)
+[ 55] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53482 (Time: 1529219977756122401)
+[ 56] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 55730 (Time: 1529219977806456931)
+[ 57] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44310 (Time: 1529219978712073675)
+[ 58] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53504 (Time: 1529219979154823769)
+[ 59] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44318 (Time: 1529219979164909040)
+[ 60] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 55754 (Time: 1529219979195110344)
+[ 61] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44364 (Time: 1529219979808892561)
+[ 62] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 55766 (Time: 1529219979899460872)
+[ 63] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44346 (Time: 1529219981459321390)
+[ 64] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53548 (Time: 1529219982063081855)
+[ 65] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44358 (Time: 1529219982556143596)
+[ 66] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44370 (Time: 1529219982556157190)
+[ 67] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44376 (Time: 1529219983059261819)
+[ 68] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44388 (Time: 1529219983572520233)
+[ 69] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44394 (Time: 1529219984065605629)
+[ 70] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53566 (Time: 1529219984568826750)
+[ 71] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53650 (Time: 1529219991633027550)
+TID [ 44]
+Interval 0.00-20.03 sec
+Transfer  383 KBytes
+Bandwidth  156 Kbits/sec
+Reads 92
+DistBin 87:4:1:0:0:0:0:0
+TotalTime 20.027673 sec
+
+[ 44] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53584 (Time: 1529219993333452310)
+[ 72] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53590 (Time: 1529219994550974390)
+[ 73] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44400 (Time: 1529219994550987086)
+TID [ 49]
+Interval 0.00-22.68 sec
+Transfer  482 KBytes
+Bandwidth  174 Kbits/sec
+Reads 121
+DistBin 117:0:3:0:1:0:0:0
+TotalTime 22.683048 sec
+
+TID [ 56]
+Interval 0.00-22.95 sec
+Transfer  103 KBytes
+Bandwidth 36.8 Kbits/sec
+Reads 43
+DistBin 43:0:0:0:0:0:0:0
+TotalTime 22.952184 sec
+
+[ 49] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44424 (Time: 1529219995567457367)
+[ 56] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44436 (Time: 1529219996050381180)
+[ 74] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44442 (Time: 1529219996291884487)
+[ 75] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 53632 (Time: 1529219996291896041)
+[ 76] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 55880 (Time: 1529219996291909578)
+[ 77] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 55886 (Time: 1529219996503263240)
+TID [ 59]
+Interval 0.00-24.41 sec
+Transfer  103 KBytes
+Bandwidth 34.6 Kbits/sec
+Reads 39
+DistBin 39:0:0:0:0:0:0:0
+TotalTime 24.410643 sec
+
+TID [ 54]
+Interval 0.00-24.68 sec
+Transfer  243 KBytes
+Bandwidth 80.7 Kbits/sec
+Reads 85
+DistBin 83:2:0:0:0:0:0:0
+TotalTime 24.683413 sec
+
+TID [ 50]
+Interval 0.00-24.76 sec
+Transfer  317 KBytes
+Bandwidth  105 Kbits/sec
+Reads 110
+DistBin 109:1:0:0:0:0:0:0
+TotalTime 24.759728 sec
+
+TID [ 61]
+Interval 0.00-24.99 sec
+Transfer  103 KBytes
+Bandwidth 33.8 Kbits/sec
+Reads 38
+DistBin 38:0:0:0:0:0:0:0
+TotalTime 24.986374 sec
+
+TID [ 51]
+Interval 0.00-25.26 sec
+Transfer  482 KBytes
+Bandwidth  156 Kbits/sec
+Reads 137
+DistBin 132:2:3:0:0:0:0:0
+TotalTime 25.263954 sec
+
+TID [ 47]
+Interval 0.00-25.43 sec
+Transfer  126 KBytes
+Bandwidth 40.5 Kbits/sec
+Reads 47
+DistBin 47:0:0:0:0:0:0:0
+TotalTime 25.429931 sec
+
+[ 50] local 10.0.0.3 port 5001 connected with 10.0.0.100 port 44460 (Time: 1529219997881990400)
+TID [ 42]
+Interval 0.00-25.85 sec
+Transfer  928 KBytes
+Bandwidth  294 Kbits/sec
+Reads 242
+DistBin 237:0:1:3:1:0:0:0
+TotalTime 25.850337 sec
+
+TID [ 36]
+Interval 0.00-26.27 sec
+Transfer 1.53 MBytes
+Bandwidth  488 Kbits/sec
+Reads 418
+DistBin 409:3:2:1:2:1:0:0
+TotalTime 26.272031 sec
+
+TID [ 45]
+Interval 0.00-26.42 sec
+Transfer  610 KBytes
+Bandwidth  189 Kbits/sec
+Reads 176
+DistBin 172:1:2:0:1:0:0:0
+TotalTime 26.423579 sec
+
+TID [ 55]
+Interval 0.00-26.56 sec
+Transfer  103 KBytes
+Bandwidth 31.8 Kbits/sec
+Reads 41
+DistBin 41:0:0:0:0:0:0:0
+TotalTime 26.563795 sec
+
+TID [ 37]
+Interval 0.00-26.67 sec
+Transfer  878 KBytes
+Bandwidth  270 Kbits/sec
+Reads 281
+DistBin 276:4:1:0:0:0:0:0
+TotalTime 26.670430 sec
+
+TID [ 43]
+Interval 0.00-26.72 sec
+Transfer  673 KBytes
+Bandwidth  206 Kbits/sec
+Reads 197
+DistBin 193:1:2:1:0:0:0:0
+TotalTime 26.718877 sec
+
+TID [ 62]
+Interval 0.00-26.80 sec
+Transfer  113 KBytes
+Bandwidth 34.6 Kbits/sec
+Reads 47
+DistBin 47:0:0:0:0:0:0:0
+TotalTime 26.800186 sec
+
+TID [ 38]
+Interval 0.00-26.87 sec
+Transfer 1.34 MBytes
+Bandwidth  419 Kbits/sec
+Reads 365
+DistBin 357:3:2:1:1:1:0:0
+TotalTime 26.870547 sec
+
+TID [ 40]
+Interval 0.00-27.09 sec
+Transfer  807 KBytes
+Bandwidth  244 Kbits/sec
+Reads 254
+DistBin 250:2:1:1:0:0:0:0
+TotalTime 27.088727 sec
+
+TID [ 57]
+Interval 0.00-27.49 sec
+Transfer  103 KBytes
+Bandwidth 30.8 Kbits/sec
+Reads 35
+DistBin 35:0:0:0:0:0:0:0
+TotalTime 27.491054 sec
+
+TID [ 48]
+Interval 0.00-27.67 sec
+Transfer  117 KBytes
+Bandwidth 34.7 Kbits/sec
+Reads 48
+DistBin 48:0:0:0:0:0:0:0
+TotalTime 27.669197 sec
+
+TID [ 53]
+Interval 0.00-27.78 sec
+Transfer  103 KBytes
+Bandwidth 30.4 Kbits/sec
+Reads 44
+DistBin 44:0:0:0:0:0:0:0
+TotalTime 27.778304 sec
+
+TID [ 58]
+Interval 0.00-27.80 sec
+Transfer  103 KBytes
+Bandwidth 30.4 Kbits/sec
+Reads 41
+DistBin 41:0:0:0:0:0:0:0
+TotalTime 27.795258 sec
+
+TID [ 41]
+Interval 0.00-27.89 sec
+Transfer  573 KBytes
+Bandwidth  168 Kbits/sec
+Reads 170
+DistBin 165:3:2:0:0:0:0:0
+TotalTime 27.890519 sec
+
+TID [ 66]
+Interval 0.00-28.07 sec
+Transfer  188 KBytes
+Bandwidth 54.9 Kbits/sec
+Reads 76
+DistBin 76:0:0:0:0:0:0:0
+TotalTime 28.073838 sec
+
+TID [ 46]
+Interval 0.00-28.22 sec
+Transfer  212 KBytes
+Bandwidth 61.6 Kbits/sec
+Reads 82
+DistBin 82:0:0:0:0:0:0:0
+TotalTime 28.218232 sec
+
+TID [ 60]
+Interval 0.00-28.90 sec
+Transfer 96.2 KBytes
+Bandwidth 27.3 Kbits/sec
+Reads 39
+DistBin 39:0:0:0:0:0:0:0
+TotalTime 28.899112 sec
+
+TID [ 39]
+Interval 0.00-29.39 sec
+Transfer  935 KBytes
+Bandwidth  261 Kbits/sec
+Reads 282
+DistBin 276:4:1:1:0:0:0:0
+TotalTime 29.392799 sec
+
+TID [ 63]
+Interval 0.00-29.89 sec
+Transfer 86.3 KBytes
+Bandwidth 23.6 Kbits/sec
+Reads 35
+DistBin 35:0:0:0:0:0:0:0
+TotalTime 29.887336 sec
+
+TID [ 65]
+Interval 0.00-30.65 sec
+Transfer 86.3 KBytes
+Bandwidth 23.1 Kbits/sec
+Reads 37
+DistBin 37:0:0:0:0:0:0:0
+TotalTime 30.645757 sec
+
+TID [ 52]
+Interval 0.00-31.17 sec
+Transfer  355 KBytes
+Bandwidth 93.3 Kbits/sec
+Reads 103
+DistBin 99:4:0:0:0:0:0:0
+TotalTime 31.165562 sec
+
+TID [ 70]
+Interval 0.00-31.89 sec
+Transfer 86.3 KBytes
+Bandwidth 22.2 Kbits/sec
+Reads 37
+DistBin 37:0:0:0:0:0:0:0
+TotalTime 31.892496 sec
+
+TID [ 67]
+Interval 0.00-31.97 sec
+Transfer 86.3 KBytes
+Bandwidth 22.1 Kbits/sec
+Reads 35
+DistBin 35:0:0:0:0:0:0:0
+TotalTime 31.968806 sec
+
+TID [ 68]
+Interval 0.00-32.48 sec
+Transfer 86.3 KBytes
+Bandwidth 21.8 Kbits/sec
+Reads 37
+DistBin 37:0:0:0:0:0:0:0
+TotalTime 32.477707 sec
+
+TID [ 69]
+Interval 0.00-33.18 sec
+Transfer 86.3 KBytes
+Bandwidth 21.3 Kbits/sec
+Reads 37
+DistBin 37:0:0:0:0:0:0:0
+TotalTime 33.183953 sec
+
+TID [ 44]
+Interval 0.00-33.19 sec
+Transfer 86.3 KBytes
+Bandwidth 21.3 Kbits/sec
+Reads 37
+DistBin 37:0:0:0:0:0:0:0
+TotalTime 33.188780 sec
+
+TID [ 71]
+Interval 0.00-37.10 sec
+Transfer  165 KBytes
+Bandwidth 36.5 Kbits/sec
+Reads 70
+DistBin 70:0:0:0:0:0:0:0
+TotalTime 37.101794 sec
+
+TID [ 75]
+Interval 0.00-38.41 sec
+Transfer  332 KBytes
+Bandwidth 70.7 Kbits/sec
+Reads 127
+DistBin 127:0:0:0:0:0:0:0
+TotalTime 38.414285 sec
+
+TID [ 73]
+Interval 0.00-38.88 sec
+Transfer  598 KBytes
+Bandwidth  126 Kbits/sec
+Reads 220
+DistBin 220:0:0:0:0:0:0:0
+TotalTime 38.877856 sec
+
+TID [ 74]
+Interval 0.00-40.01 sec
+Transfer  342 KBytes
+Bandwidth 70.1 Kbits/sec
+Reads 130
+DistBin 130:0:0:0:0:0:0:0
+TotalTime 40.008898 sec
+
+TID [ 77]
+Interval 0.00-40.22 sec
+Transfer  598 KBytes
+Bandwidth  122 Kbits/sec
+Reads 177
+DistBin 176:0:0:0:0:0:0:1
+TotalTime 40.222408 sec
+
+TID [ 49]
+Interval 0.00-40.48 sec
+Transfer  598 KBytes
+Bandwidth  121 Kbits/sec
+Reads 185
+DistBin 184:0:0:1:0:0:0:0
+TotalTime 40.481173 sec
+
+TID [ 72]
+Interval 0.00-40.93 sec
+Transfer  332 KBytes
+Bandwidth 66.4 Kbits/sec
+Reads 126
+DistBin 126:0:0:0:0:0:0:0
+TotalTime 40.932344 sec
+
+TID [ 56]
+Interval 0.00-40.93 sec
+Transfer  342 KBytes
+Bandwidth 68.5 Kbits/sec
+Reads 124
+DistBin 124:0:0:0:0:0:0:0
+TotalTime 40.925424 sec
+
+TID [ 76]
+Interval 0.00-40.93 sec
+Transfer  598 KBytes
+Bandwidth  120 Kbits/sec
+Reads 180
+DistBin 179:0:0:0:0:0:1:0
+TotalTime 40.928066 sec
+
+TID [ 64]
+Interval 0.00-40.94 sec
+Transfer 86.3 KBytes
+Bandwidth 17.3 Kbits/sec
+Reads 37
+DistBin 37:0:0:0:0:0:0:0
+TotalTime 40.935459 sec
+
+TID [ 50]
+Interval 0.00-40.97 sec
+Transfer  470 KBytes
+Bandwidth 94.0 Kbits/sec
+Reads 155
+DistBin 153:1:1:0:0:0:0:0
+TotalTime 40.965621 sec
+
+[SUM] 0.00-40.97 sec  16.8 MBytes  3.45 Mbits/sec  5439    5363:35:22:9:6:2:1:1
