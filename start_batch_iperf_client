@@ -7,7 +7,7 @@ PARALLEL=$3
 first="05/27/2018"
 lb="rr"
 lbmode="tcp"
-ntype="distrib"
+ntype="clos"
 # sudo rm -R "$HOST".txt "$HOST"T.txt
 sudo rm -R "$HOST".txt
 

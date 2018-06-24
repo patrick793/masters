@@ -756,9 +756,9 @@ class SimpleSwitch13(app_manager.RyuApp):
             # print(str(dpid) + " " + str(ip_header.proto))
 
             cookie = random.randint(0, 0xffffffffffffffff)
-            idle_timeout = 10
+            idle_timeout = 60
             if self.is_lp or self.is_lb:
-                idle_timeout = 10
+                idle_timeout = 60
 
             if ip_header.dst == self.controller_ip and ip_header.proto == in_proto.IPPROTO_TCP:
                 tcp_header = pkt.get_protocols(tcp.tcp)[0]
