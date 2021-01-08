@@ -1,0 +1,564 @@
+openapi: 3.0.0
+info:
+  title: Recommendation Feedback API
+  version: '1.0'
+paths:
+  /recommendation/feedback/insert:
+    post:
+      tags:
+        - insert
+      parameters:
+        - name: feedbackHistory
+          description: Feedback History
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - T
+              - F
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: Http Status Code
+                    type: integer
+                  success:
+                    description: Is API call successful
+                    type: boolean
+                  message:
+                    description: Action taken in the API call
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      feedbackId:
+                        description: Feedback ID
+                        type: integer
+                      history:
+                        type: object
+                        properties:
+                          feedbackId:
+                            description: Feedback ID
+                            type: integer
+                          feedbackDttm:
+                            description: Feedback Date Time
+                            type: string
+                          feedbackSystem:
+                            description: Feedback System
+                            type: string
+                            enum:
+                              - COM
+                              - '360'
+                              - SVC
+                          recommmendationSourceSystem:
+                            description: 'Recommmendation Source System (EMR – Emerald, MOB – Mobile, CG – Consumer Group)'
+                            type: string
+                            enum:
+                              - EMR
+                              - MOB
+                              - CG
+                          recommendedOffer:
+                            description: Recommended Offer
+                            type: string
+                          feedbackType:
+                            description: Feedback Type
+                            type: string
+                            enum:
+                              - ACCEPT
+                              - CONSIDER
+                              - REJECT
+                              - MENTIONED
+                          feedbackReason:
+                            description: Feedback Reason
+                            type: string
+                          productLines:
+                            description: Product Lines
+                            type: string
+                            enum:
+                              - CLUB
+                              - MOB
+                              - CG_PCD
+                              - CG_LTS
+                          clubId:
+                            description: Club Id
+                            type: string
+                          parentCustNum:
+                            description: Parent Customer Number
+                            type: string
+                          lineLevelKey:
+                            description: Line Level Key
+                            type: string
+                            enum:
+                              - MOB_NUM
+                              - FSA
+                          lineLevelValue:
+                            description: Line Level Value
+                            type: string
+                          customerNumber:
+                            description: Customer Number
+                            type: string
+                          staffId:
+                            description: Staff Id
+                            type: string
+                          staffName:
+                            description: Staff Name
+                            type: string
+                          teamId:
+                            description: Team Id
+                            type: string
+                          teamName:
+                            description: Team Name
+                            type: string
+                          channelCode:
+                            description: Channel Code
+                            type: string
+                          channelName:
+                            description: Channel Name
+                            type: string
+                          enabledFlag:
+                            description: Enabled Flag
+                            type: string
+              example:
+                status: 200
+                success: true
+                message: Insert record with feedback history
+                data:
+                  feedbackId: 5814
+                  history:
+                    - feedbackId: 1
+                      feedbackDttm: '2020-12-29 09:33:36'
+                      feedbackSystem: '360'
+                      recommmendationSourceSystem: MOB
+                      recommendedOffer: XMAS Offer
+                      feedbackType: ACCEPT
+                      feedbackReason: Sample Reason
+                      productLines: MOB
+                      clubId: C00000001
+                      parentCustNum: P99999999
+                      lineLevelKey: FSA
+                      lineLevelValue: F3333333
+                      customerNumber: HKT99999999
+                      staffId: S001
+                      staffName: Staff001
+                      teamId: T001
+                      teamName: Team001
+                      channelCode: CC001
+                      channelName: Channel Code 001
+                      enabledFlag: 'Y'
+                    - feedbackId: 1
+                      feedbackDttm: '2020-12-29 09:33:36'
+                      feedbackSystem: '360'
+                      recommmendationSourceSystem: MOB
+                      recommendedOffer: XMAS Offer
+                      feedbackType: ACCEPT
+                      feedbackReason: Sample Reason
+                      productLines: MOB
+                      clubId: C00000001
+                      parentCustNum: P99999999
+                      lineLevelKey: FSA
+                      lineLevelValue: F5555555
+                      customerNumber: HKT99999999
+                      staffId: S001
+                      staffName: Staff001
+                      teamId: T001
+                      teamName: Team001
+                      channelCode: CC001
+                      channelName: Channel Code 001
+                      enabledFlag: 'Y'
+        '201':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: Http Status Code
+                    type: integer
+                  success:
+                    description: Is API call successful
+                    type: boolean
+                  message:
+                    description: Action taken in the API call
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      feedbackId:
+                        description: Feedback ID
+                        type: integer
+              example:
+                status: 201
+                success: true
+                message: Insert record with no feedback history
+                data:
+                  feedbackId: 5814
+        '480':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: Http Status Code
+                    type: integer
+                  success:
+                    description: Is API call successful
+                    type: boolean
+                  message:
+                    description: Action taken in the API call
+                    type: string
+                  data:
+                    description: Result
+                    type: string
+              example:
+                status: 480
+                success: false
+                message: 'The following fields are required : channel_code'
+                data: ''
+      summary: Insert new record in the recommendation table
+      description: |-
+        Accept parameter to check whether feedback history is needed.
+
+        If feedbackHistory="T", returns the feedbackId and the history.
+
+        If feedbackHistory="F", returns only the feedbackId.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                feedbackId:
+                  description: Feedback ID
+                  type: integer
+                feedbackDttm:
+                  description: Feedback Date Time
+                  type: string
+                feedbackSystem:
+                  description: Feedback System
+                  type: string
+                  enum:
+                    - COM
+                    - '360'
+                    - SVC
+                recommmendationSourceSystem:
+                  description: 'Recommmendation Source System (EMR – Emerald, MOB – Mobile, CG – Consumer Group)'
+                  type: string
+                  enum:
+                    - EMR
+                    - MOB
+                    - CG
+                recommendedOffer:
+                  description: Recommended Offer
+                  type: string
+                feedbackType:
+                  description: Feedback Type
+                  type: string
+                  enum:
+                    - ACCEPT
+                    - CONSIDER
+                    - REJECT
+                    - MENTIONED
+                feedbackReason:
+                  description: Feedback Reason
+                  type: string
+                productLines:
+                  description: Product Lines
+                  type: string
+                  enum:
+                    - CLUB
+                    - MOB
+                    - CG_PCD
+                    - CG_LTS
+                clubId:
+                  description: Club Id
+                  type: string
+                parentCustNum:
+                  description: Parent Customer Number
+                  type: string
+                lineLevelKey:
+                  description: Line Level Key
+                  type: string
+                  enum:
+                    - MOB_NUM
+                    - FSA
+                lineLevelValue:
+                  description: Line Level Value
+                  type: string
+                customerNumber:
+                  description: Customer Number
+                  type: string
+                staffId:
+                  description: Staff Id
+                  type: string
+                staffName:
+                  description: Staff Name
+                  type: string
+                teamId:
+                  description: Team Id
+                  type: string
+                teamName:
+                  description: Team Name
+                  type: string
+                channelCode:
+                  description: Channel Code
+                  type: string
+                channelName:
+                  description: Channel Name
+                  type: string
+                enabledFlag:
+                  description: Enabled Flag
+                  type: string
+              required:
+                - feedbackSystem
+                - recommmendationSourceSystem
+                - recommendedOffer
+                - feedbackType
+                - feedbackReason
+                - productLines
+                - parentCustNum
+                - lineLevelKey
+                - lineLevelValue
+                - customerNumber
+                - staffId
+                - staffName
+                - teamId
+                - teamName
+                - channelCode
+                - channelName
+            example:
+              feedbackSystem: '360'
+              recommmendationSourceSystem: MOB
+              recommendedOffer: XMAS Offer
+              feedbackType: ACCEPT
+              feedbackReason: Sample Reason
+              productLines: MOB
+              clubId: C00000001
+              parentCustNum: P99999999
+              lineLevelKey: FSA
+              lineLevelValue: F3333333
+              customerNumber: HKT99999999
+              staffId: S001
+              staffName: Staff001
+              teamId: T001
+              teamName: Team001
+              channelCode: CC001
+              channelName: Channel Code 001
+  /recommendation/feedback/retrieve:
+    get:
+      tags:
+        - retrieve
+      parameters:
+        - name: parentCustNum
+          description: Parent Customer Number
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: productLines
+          description: Product Lines
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: Http Status Code
+                    type: integer
+                  success:
+                    description: Is API call successful
+                    type: boolean
+                  message:
+                    description: Action taken in the API call
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      feedbackId:
+                        description: Feedback ID
+                        type: integer
+                      feedbackDttm:
+                        description: Feedback Date Time
+                        type: string
+                      feedbackSystem:
+                        description: Feedback System
+                        type: string
+                        enum:
+                          - COM
+                          - '360'
+                          - SVC
+                      recommmendationSourceSystem:
+                        description: 'Recommmendation Source System (EMR – Emerald, MOB – Mobile, CG – Consumer Group)'
+                        type: string
+                        enum:
+                          - EMR
+                          - MOB
+                          - CG
+                      recommendedOffer:
+                        description: Recommended Offer
+                        type: string
+                      feedbackType:
+                        description: Feedback Type
+                        type: string
+                        enum:
+                          - ACCEPT
+                          - CONSIDER
+                          - REJECT
+                          - MENTIONED
+                      feedbackReason:
+                        description: Feedback Reason
+                        type: string
+                      productLines:
+                        description: Product Lines
+                        type: string
+                        enum:
+                          - CLUB
+                          - MOB
+                          - CG_PCD
+                          - CG_LTS
+                      clubId:
+                        description: Club Id
+                        type: string
+                      parentCustNum:
+                        description: Parent Customer Number
+                        type: string
+                      lineLevelKey:
+                        description: Line Level Key
+                        type: string
+                        enum:
+                          - MOB_NUM
+                          - FSA
+                      lineLevelValue:
+                        description: Line Level Value
+                        type: string
+                      customerNumber:
+                        description: Customer Number
+                        type: string
+                      staffId:
+                        description: Staff Id
+                        type: string
+                      staffName:
+                        description: Staff Name
+                        type: string
+                      teamId:
+                        description: Team Id
+                        type: string
+                      teamName:
+                        description: Team Name
+                        type: string
+                      channelCode:
+                        description: Channel Code
+                        type: string
+                      channelName:
+                        description: Channel Name
+                        type: string
+                      enabledFlag:
+                        description: Enabled Flag
+                        type: string
+              example:
+                status: 200
+                success: true
+                message: Retrieve feedback records
+                data:
+                  - feedbackId: 1
+                    feedbackDttm: '2020-12-29 09:33:36'
+                    feedbackSystem: '360'
+                    recommmendationSourceSystem: MOB
+                    recommendedOffer: XMAS Offer
+                    feedbackType: ACCEPT
+                    feedbackReason: Sample Reason
+                    productLines: MOB
+                    clubId: C00000001
+                    parentCustNum: P99999999
+                    lineLevelKey: FSA
+                    lineLevelValue: F3333333
+                    customerNumber: HKT99999999
+                    staffId: S001
+                    staffName: Staff001
+                    teamId: T001
+                    teamName: Team001
+                    channelCode: CC001
+                    channelName: Channel Code 001
+                    enabledFlag: 'Y'
+                  - feedbackId: 2
+                    feedbackDttm: '2020-12-29 09:33:36'
+                    feedbackSystem: '360'
+                    recommmendationSourceSystem: MOB
+                    recommendedOffer: XMAS Offer
+                    feedbackType: ACCEPT
+                    feedbackReason: Sample Reason
+                    productLines: MOB
+                    clubId: C00000001
+                    parentCustNum: P99999999
+                    lineLevelKey: FSA
+                    lineLevelValue: F5555555
+                    customerNumber: HKT99999999
+                    staffId: S001
+                    staffName: Staff001
+                    teamId: T001
+                    teamName: Team001
+                    channelCode: CC001
+                    channelName: Channel Code 001
+                    enabledFlag: 'Y'
+      summary: Get feedback records
+      description: Fetch back all the feedbacks of particular customer only with filter on product lines.
+tags:
+  - name: insert
+    description: |-
+      *Elaboration*
+
+      Staff will access 360/COM and once they click into their recommendation widget for particular customer which will trigger an API call to get a list of recommendation result from in order to render to its widget.
+
+      Staff itself need to provide its current responsibility "one of the available Profiles" which means that staff is representing either CLUB, Mobile or CG (Netivgator, Fixed Line, …), e.g., CLUB, MOB, CG_PCD, CG_LTS. And they are so-called the product_lines for recommendation feedback.
+
+      As there will be 3 recommendation result providers, EMR – Emerald, MOB – Mobile, CG – Consumer Group, Recommendation results will come with this information, i.e. the Recommendation Source system.
+
+      Staff will recommend customer the recommendation result from system and mark down the feedback like ACCEPT, CONSIDER, REJECT and MENTIONED.
+
+      *Validation*
+
+      1. feedback_system is not null, i.e. 360, COM, ...
+      2. recommendation_source_system is not null, I.e EMR, MOB, ...
+      3. recommendation_offer is not null
+      4. feedback_type is not null
+      5. feedback_reason is not null if feedback_type is "REJECT"
+      6. product_lines is not null
+      7. club_id is not null if product_lines is "CLUB"
+      8. line_level_key is not null
+      9. line_level_value is not null
+      10. parent_cust_num is not null
+      11. staff_id and staff_name are not null
+      12. team_id and team_name are not null
+      13. channel_code and channel_name are not null
+      14. enabled_flag is default as "Y" which is reserved for soft-delete in the future
+  - name: retrieve
+    description: |-
+      *Elaboration*
+
+
+      Staff will access 360/COM and once they click into their recommendation widget for particular customer which will trigger an API call to get a list of recommendation result from in order to render to its widget.
+
+      Staff itself need to provide its current responsibility "one of the available Profiles" which means that staff is representing either CLUB, Mobile or CG(Netivgator, Fixed Line, …), e.g., CLUB, MOB, CG_PCD, CG_LTS. And they are so-called the product_lines for recommendation feedback.
+
+      *Condition*
+
+      This retrieval API will fetch back all the feedbacks of particular customer only.
+
+      This retrieval API needs to filter the "product_lines" as well.
+
+      Refer the table recommendation_feedback for the Feedbacks
